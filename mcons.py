@@ -57,7 +57,7 @@ def get_map_dir(pydir):
     raise f"error: {pydir} is not in {root_dir}"
   else:
     rel = path.relpath(pydir, root_dir)
-    dir = path.join(build_dir, rel)
+    dir = path.abspath(path.join(build_dir, rel))
     makedirs(dir, exist_ok=True)
     return dir
 
@@ -79,3 +79,12 @@ def run(root_pyfile, t):
   build_dir = path.abspath(path.curdir)
   root_dir = path.dirname(path.abspath(root_pyfile))
   return dask.compute(t)[0]
+
+def replace_extension(new_extension):
+  def f(filename):
+    name, ext = path.splitext(filename)
+    return name + new_extension
+  return f
+
+# def many_task(pyfile, to_target, dependencies, func):
+#   return [task(pyfile, to_target(dep), dep, func) for dep in dependencies]
