@@ -1,9 +1,23 @@
 
 import sys
+import threading
 import subprocess
 import concurrent.futures
 from typing import List, Union
 from os import path, stat, makedirs
+
+def memo(func):
+  has_eval = False
+  value = None
+  lock = threading.Lock()
+  def f(*argv):
+    nonlocal has_eval, value
+    with lock:
+      if not has_eval:
+        value = func(*argv)
+        has_eval = True
+      return value
+  return f
 
 class ConsContext:
   executor = None
@@ -100,7 +114,7 @@ def cons_object(cm, src, func):
     if need_process(obj, [src1]):
       func(cm.build_dir, [src1, obj])
     return obj
-  return f
+  return memo(f)
 
 def pack_ar(cm, name, sources, func):
   def f():
@@ -110,4 +124,4 @@ def pack_ar(cm, name, sources, func):
     if need_process(target, objects):
       run_command(cm.build_dir, f"ar r {target} {' '.join(objects)}")
     return target
-  return f
+  return memo(f)
