@@ -3,7 +3,7 @@ from os import path, stat, makedirs
 import subprocess
 from typing import List, Union
 import dask
-from dask import delayed
+from dask.delayed import delayed, Delayed
 
 build_dir = ""
 root_dir = ""
@@ -30,6 +30,11 @@ def run_command(cwd, *args: Union[str, List[str]]):
   if result.returncode != 0:
     raise f"error status code: {result.returncode}"
 
+def format_command(templ):
+  def f(cwd, deps): 
+    return run_command(cwd, templ.format(*deps))
+  return f
+
 def need_process(target: str, deps: List[str]):
   if not path.exists(target): return True
 
@@ -44,13 +49,17 @@ def need_process(target: str, deps: List[str]):
   return False
 
 def to_delayed(pydir, x): 
-  if isinstance(x, str):
+  if isinstance(x, Delayed):
+    return x
+  elif isinstance(x, str):
     if path.isabs(x):
       return delayed(x) 
     else:
       return delayed(path.join(pydir, x))
+  elif callable(x):
+    return delayed(x())
   else:
-    return x
+    raise f"to_delayed error: {x}"
 
 def get_map_dir(pydir):
   if root_dir != path.commonpath([root_dir, pydir]):
@@ -62,10 +71,11 @@ def get_map_dir(pydir):
     return dir
 
 @delayed
-def task(pyfile, target, dependencies, func):
+def task(pyfile, target, depend, func):
   pydir = path.dirname(path.abspath(pyfile))
-  dependencies1 = [to_delayed(pydir, x) for x in dependencies]
-  deps = dask.compute(dependencies1)[0]
+
+  depend1 = [to_delayed(pydir, x) for x in depend]
+  deps = dask.compute(depend1)[0]
   map_dir = get_map_dir(pydir)
 
   target1 = path.join(map_dir, target)
@@ -86,5 +96,8 @@ def replace_extension(new_extension):
     return name + new_extension
   return f
 
-# def many_task(pyfile, to_target, dependencies, func):
-#   return [task(pyfile, to_target(dep), dep, func) for dep in dependencies]
+def pack_ar(pyfile, target, sources, func):
+  objs = [task(pyfile, replace_extension(".o")(src), [src], func) for src in sources]
+  return task(pyfile, target, objs,
+    lambda cwd, deps: run_command(cwd, f"ar r {target} {' '.join(deps)}")
+  )
