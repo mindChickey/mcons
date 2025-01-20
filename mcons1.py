@@ -1,8 +1,27 @@
 
-from os import path, stat, makedirs
-import subprocess
-from typing import List, Union
 import sys
+import subprocess
+import concurrent.futures
+from typing import List, Union
+from os import path, stat, makedirs
+
+class ConsContext:
+  executor = None
+  def __init__(self):
+    self.executor = concurrent.futures.ThreadPoolExecutor()
+
+  def __del__(self):
+    self.executor.shutdown()
+
+  def compute(self, tasks):
+    if(len(tasks) == 0): 
+      return []
+    else:
+      futures = [self.executor.submit(task) for task in tasks[1:]]
+      r0 = tasks[0]()
+      return [r0] + [future.result() for future in futures]
+
+cc = ConsContext()
 
 def get_build_dir(src_dir, root_src_dir):
   if root_src_dir != path.commonpath([root_src_dir, src_dir]):
@@ -11,7 +30,7 @@ def get_build_dir(src_dir, root_src_dir):
     rel = path.relpath(src_dir, root_src_dir)
     return path.abspath(rel)
 
-class ConsContext:
+class ConsModule:
   src_dir = ""
   build_dir = ""
   def __init__(self, pyfile):
@@ -38,6 +57,8 @@ def need_process(target: str, deps: List[str]):
     elif target_stat.st_mtime < stat(dep).st_mtime:
       return True
   return False
+
+####################################
 
 def join_string_list(strlist):
   result = []
@@ -72,21 +93,21 @@ def replace_extension(new_extension):
     return name + new_extension
   return f
 
-def cons_object(cc, src, func):
+def cons_object(cm, src, func):
   def f():
-    src1 = cc.src(src)
-    obj = cc.target(replace_extension(".o")(src))
+    src1 = cm.src(src)
+    obj = cm.target(replace_extension(".o")(src))
     if need_process(obj, [src1]):
-      func(cc.build_dir, [src1, obj])
+      func(cm.build_dir, [src1, obj])
     return obj
   return f
 
-def pack_ar(cc, name, sources, func):
+def pack_ar(cm, name, sources, func):
   def f():
-    objects = [cons_object(cc, src, func)() for src in sources]
-    target = cc.target(name)
+    tasks = [cons_object(cm, src, func) for src in sources]
+    objects = cc.compute(tasks)
+    target = cm.target(name)
     if need_process(target, objects):
-      run_command(cc.build_dir, f"ar r {target} {' '.join(objects)}")
+      run_command(cm.build_dir, f"ar r {target} {' '.join(objects)}")
     return target
   return f
-
