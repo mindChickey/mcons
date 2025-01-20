@@ -125,3 +125,13 @@ def pack_ar(cm, name, sources, func):
       run_command(cm.build_dir, f"ar r {target} {' '.join(objects)}")
     return target
   return memo(f)
+
+def task(cm, name, depends, func):
+  def f():
+    depends1 = [cm.src(x) if isinstance(x, str) else x for x in depends]
+    deps = cc.compute(depends1)
+    target = cm.target(name)
+    if need_process(target, deps):
+      func(cm.build_dir, deps)
+    return target
+  return memo(f)
