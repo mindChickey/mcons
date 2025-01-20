@@ -40,11 +40,11 @@ def need_process(target: str, deps: List[str]):
 
   target_stat = stat(target)
   for dep in deps:
-    if len(dep) == 0: continue
-    if not path.exists(dep):
+    if len(dep) == 0:
+      continue
+    elif not path.exists(dep):
       raise f"error: file not found: {dep}"
-    dep_stat = stat(dep)
-    if target_stat.st_mtime < dep_stat.st_mtime:
+    elif target_stat.st_mtime < stat(dep).st_mtime:
       return True
   return False
 
@@ -81,6 +81,8 @@ def task(pyfile, target, depend, func):
   target1 = path.join(map_dir, target)
   if need_process(target1, deps):
     func(map_dir, deps)
+  else:
+    print(f"{target} has been updated")
   return target1
 
 def run(root_pyfile, t):
