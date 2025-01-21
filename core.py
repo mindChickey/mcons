@@ -1,10 +1,11 @@
 
 import atexit
-import sys
 import yaml
 import threading
+from sys import argv
+from enum import Enum
 import concurrent.futures
-from os import path, stat, makedirs
+from os import path, stat, makedirs, remove
 
 def memo(func):
   has_eval = False
@@ -32,11 +33,25 @@ def save_depend_map(depend_map):
       yaml.dump(depend_map, f)
   return f
 
+def remove_file(name):
+  if path.exists(name):
+    remove(name)
+
+class Mode(Enum):
+  BUILD = 0
+  CLEAN = 1
+
 class ConsContext:
   def __init__(self):
     self.executor = concurrent.futures.ThreadPoolExecutor()
-    self.depend_map = read_depend_map()
-    atexit.register(save_depend_map(self.depend_map))
+    if len(argv) > 1 and argv[1] == "clean":
+      self.mode = Mode.CLEAN
+      self.depend_map = {}
+      remove_file('depend_map.yaml', )
+    else:
+      self.mode = Mode.BUILD
+      self.depend_map = read_depend_map()
+      atexit.register(save_depend_map(self.depend_map))
 
   def __del__(self):
     self.executor.shutdown()
@@ -70,7 +85,7 @@ class ConsModule:
   src_dir = ""
   build_dir = ""
   def __init__(self, pyfile):
-    root_src_dir = path.abspath(path.dirname(sys.argv[0]))
+    root_src_dir = path.abspath(path.dirname(argv[0]))
     self.src_dir = path.abspath(path.dirname(pyfile))
     self.build_dir = get_build_dir(self.src_dir, root_src_dir)
     makedirs(self.build_dir, exist_ok=True)
@@ -82,6 +97,10 @@ class ConsModule:
     return path.join(self.build_dir, file)
 
 def need_update(target: str, deps):
+  if cc.mode == Mode.CLEAN:
+    remove_file(target)
+    return False
+    
   if not path.exists(target): return True
 
   target_stat = stat(target)
@@ -95,6 +114,10 @@ def need_update(target: str, deps):
   return False
 
 def check_depend(cm, obj):
+  if cc.mode == Mode.CLEAN:
+    remove_file(obj)
+    return False
+
   deps = cc.depend_map.get(obj)
   if deps:
     return need_update(obj, [cm.src(dep) for dep in deps])
