@@ -1,12 +1,86 @@
 
-from os import path, stat, makedirs
+import sys
+import threading
 import subprocess
+import concurrent.futures
 from typing import List, Union
-import dask
-from dask.delayed import delayed, Delayed
+from os import path, stat, makedirs
 
-build_dir = ""
-root_dir = ""
+def memo(func):
+  has_eval = False
+  value = None
+  lock = threading.Lock()
+  def f(*argv):
+    nonlocal has_eval, value
+    with lock:
+      if not has_eval:
+        value = func(*argv)
+        has_eval = True
+      return value
+  return f
+
+class ConsContext:
+  executor = None
+  def __init__(self):
+    self.executor = concurrent.futures.ThreadPoolExecutor()
+
+  def __del__(self):
+    self.executor.shutdown()
+
+  def compute(self, tasks):
+    futures = [self.executor.submit(task) for task in tasks]
+    results = []
+    i = len(tasks)
+    while i > 0:
+      index = i - 1
+      if futures[index].cancel():
+        results.append(tasks[index]())
+        i = index
+      else:
+        break
+
+    results0 = [future.result() for future in futures[0:i]]
+    results.reverse()
+    return results0 + results
+
+cc = ConsContext()
+
+def get_build_dir(src_dir, root_src_dir):
+  if root_src_dir != path.commonpath([root_src_dir, src_dir]):
+    raise f"error: {src_dir} is not in {root_src_dir}"
+  else:
+    rel = path.relpath(src_dir, root_src_dir)
+    return path.abspath(rel)
+
+class ConsModule:
+  src_dir = ""
+  build_dir = ""
+  def __init__(self, pyfile):
+    root_src_dir = path.abspath(path.dirname(sys.argv[0]))
+    self.src_dir = path.abspath(path.dirname(pyfile))
+    self.build_dir = get_build_dir(self.src_dir, root_src_dir)
+    makedirs(self.build_dir, exist_ok=True)
+
+  def src(self, file):
+    return path.join(self.src_dir, file)
+
+  def target(self, file):
+    return path.join(self.build_dir, file)
+
+def need_update(target: str, deps: List[str]):
+  if not path.exists(target): return True
+
+  target_stat = stat(target)
+  for dep in deps:
+    if len(dep) == 0:
+      continue
+    elif not path.exists(dep):
+      raise f"error: file not found: {dep}"
+    elif target_stat.st_mtime < stat(dep).st_mtime:
+      return True
+  return False
+
+####################################
 
 def join_string_list(strlist):
   result = []
@@ -35,71 +109,37 @@ def format_command(templ):
     return run_command(cwd, templ.format(*deps))
   return f
 
-def need_process(target: str, deps: List[str]):
-  if not path.exists(target): return True
-
-  target_stat = stat(target)
-  for dep in deps:
-    if len(dep) == 0:
-      continue
-    elif not path.exists(dep):
-      raise f"error: file not found: {dep}"
-    elif target_stat.st_mtime < stat(dep).st_mtime:
-      return True
-  return False
-
-def to_delayed(pydir, x): 
-  if isinstance(x, Delayed):
-    return x
-  elif isinstance(x, str):
-    if path.isabs(x):
-      return delayed(x) 
-    else:
-      return delayed(path.join(pydir, x))
-  elif callable(x):
-    return delayed(x())
-  else:
-    raise f"to_delayed error: {x}"
-
-def get_map_dir(pydir):
-  if root_dir != path.commonpath([root_dir, pydir]):
-    raise f"error: {pydir} is not in {root_dir}"
-  else:
-    rel = path.relpath(pydir, root_dir)
-    dir = path.abspath(path.join(build_dir, rel))
-    makedirs(dir, exist_ok=True)
-    return dir
-
-@delayed
-def task(pyfile, target, depend, func):
-  pydir = path.dirname(path.abspath(pyfile))
-
-  depend1 = [to_delayed(pydir, x) for x in depend]
-  deps = dask.compute(depend1)[0]
-  map_dir = get_map_dir(pydir)
-
-  target1 = path.join(map_dir, target)
-  if need_process(target1, deps):
-    func(map_dir, deps)
-  else:
-    print(f"{target} has been updated")
-  return target1
-
-def run(root_pyfile, t):
-  global build_dir
-  global root_dir
-  build_dir = path.abspath(path.curdir)
-  root_dir = path.dirname(path.abspath(root_pyfile))
-  return dask.compute(t)[0]
-
 def replace_extension(new_extension):
   def f(filename):
     name, ext = path.splitext(filename)
     return name + new_extension
   return f
 
-def pack_ar(pyfile, target, sources, func):
-  objs = [task(pyfile, replace_extension(".o")(src), [src], func) for src in sources]
-  return task(pyfile, target, objs,
-    lambda cwd, deps: run_command(cwd, f"ar r {target} {' '.join(deps)}")
-  )
+def cons_object(cm, src, func):
+  def f():
+    src1 = cm.src(src)
+    obj = cm.target(replace_extension(".o")(src))
+    if need_update(obj, [src1]):
+      func(cm.build_dir, [src1, obj])
+    return obj
+  return memo(f)
+
+def pack_ar(cm, name, sources, func):
+  def f():
+    tasks = [cons_object(cm, src, func) for src in sources]
+    objects = cc.compute(tasks)
+    target = cm.target(name)
+    if need_update(target, objects):
+      run_command(cm.build_dir, f"ar r {target} {' '.join(objects)}")
+    return target
+  return memo(f)
+
+def task(cm, name, depends, func):
+  def f():
+    depends1 = [cm.src(x) if isinstance(x, str) else x for x in depends]
+    deps = cc.compute(depends1)
+    target = cm.target(name)
+    if need_update(target, deps):
+      func(cm.build_dir, deps)
+    return target
+  return memo(f)
