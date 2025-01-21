@@ -1,5 +1,7 @@
 
+import atexit
 import sys
+import yaml
 import threading
 import concurrent.futures
 from os import path, stat, makedirs
@@ -17,10 +19,24 @@ def memo(func):
       return value
   return f
 
+def read_depend_map():
+  try:
+    with open("depend_map.yaml", 'r', encoding='utf-8') as f:
+      return yaml.safe_load(f)
+  except:
+    return {}
+
+def save_depend_map(depend_map):
+  def f():
+    with open('depend_map.yaml', 'w', encoding='utf-8') as f:
+      yaml.dump(depend_map, f)
+  return f
+
 class ConsContext:
-  executor = None
   def __init__(self):
     self.executor = concurrent.futures.ThreadPoolExecutor()
+    self.depend_map = read_depend_map()
+    atexit.register(save_depend_map(self.depend_map))
 
   def __del__(self):
     self.executor.shutdown()
@@ -78,3 +94,16 @@ def need_update(target: str, deps):
       return True
   return False
 
+def check_depend(cm, obj):
+  deps = cc.depend_map.get(obj)
+  if deps:
+    return need_update(obj, [cm.src(dep) for dep in deps])
+  else:
+    return True
+
+def parse_depfile(mf):
+  mf.seek(0)
+  content = mf.read()
+  r = content.split()
+  r1 = list(filter(lambda x: x != '\\', r[1:]))
+  return r1

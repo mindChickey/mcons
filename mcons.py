@@ -1,7 +1,8 @@
 
 from os import path
 import subprocess
-from core import memo, need_update, cc
+import tempfile
+from core import check_depend, memo, need_update, cc, parse_depfile
 
 def run_command(cwd, line):
   print(cwd, ": ", line)
@@ -24,18 +25,23 @@ def replace_extension(new_extension):
     return name + new_extension
   return f
 
-def cons_object(cm, src, func):
+def cons_object(cm, src, compile_templ):
   def f():
     src1 = cm.src(src)
     obj = cm.target(replace_extension(".o")(src))
-    if need_update(obj, [src1]):
-      func(cm.build_dir, [src1, obj])
+    if check_depend(cm, obj):
+      line = compile_templ.format(src1, obj)
+      run_command(cm.build_dir, line)
+      with tempfile.NamedTemporaryFile(mode='w+') as mf:
+        line1 = line + f" -MM -MF {mf.name}"
+        run_command(cm.build_dir, line1)
+        cc.depend_map[obj] = parse_depfile(mf)
     return obj
   return memo(f)
 
-def pack_ar(cm, name, sources, func):
+def pack_ar(cm, name, sources, compile_templ):
   def f():
-    tasks = [cons_object(cm, src, func) for src in sources]
+    tasks = [cons_object(cm, src, compile_templ) for src in sources]
     objects = cc.compute(tasks)
     target = cm.target(name)
     if need_update(target, objects):
