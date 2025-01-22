@@ -15,9 +15,16 @@ def update_depend(cm, target, line):
     header_depend.update(target, deps)
     return deps
 
-def compile_if_need(cm, target_mtime, deps, line):
+def update_and_compile_if_need(cm, target, target_mtime, line):
+  deps = update_depend(cm, target, line)
   if compare_depends_mtime(target_mtime, deps):
     run_command(cm, line)
+  return target
+
+def update_and_compile(cm, target, line):
+  update_depend(cm, target, line)
+  run_command(cm, line)
+  return target
 
 def cons_object(cm, src, obj, compile_templ):
   src1 = cm.src(src)
@@ -25,22 +32,17 @@ def cons_object(cm, src, obj, compile_templ):
   line = compile_templ.format(src1, target)
 
   if not path.exists(target): 
-    update_depend(cm, target, line)
-    run_command(cm, line)
-    return target
+    return update_and_compile(cm, target, line)
 
   target_mtime = path.getmtime(target)
 
   if header_depend.mtime < target_mtime: 
-    deps = update_depend(cm, target, line)
-    compile_if_need(cm, target_mtime, deps, line)
-    return target
+    return update_and_compile_if_need(cm, target, target_mtime, line)
 
   deps = header_depend.get(target)
   if deps:
-    compile_if_need(cm, target_mtime, deps, line)
+    if compare_depends_mtime(target_mtime, deps):
+      update_and_compile(cm, target, line)
     return target
   else:
-    deps = update_depend(cm, target, line)
-    compile_if_need(cm, target_mtime, deps, line)
-    return target
+    return update_and_compile_if_need(cm, target, target_mtime, line)

@@ -1,6 +1,7 @@
 
-import atexit
 import yaml
+import atexit
+import threading
 from os import fstat
 
 def parse_depfile(depfile):
@@ -25,13 +26,16 @@ def save_yaml(filename, depend_map):
 
 class HeaderDepend:
   def __init__(self, filename):
+    self.lock = threading.Lock()
     self.mtime, self.depend_map = read_yaml(filename)
     atexit.register(save_yaml(filename, self.depend_map))
 
   def get(self, obj):
-    return self.depend_map.get(obj)
+    with self.lock:
+      return self.depend_map.get(obj)
   
   def update(self, target, deps):
-    self.depend_map[target] = deps
+    with self.lock:
+      self.depend_map[target] = deps
 
 header_depend = HeaderDepend("header_depend.yaml")
