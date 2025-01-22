@@ -1,13 +1,21 @@
 
 import atexit
 import yaml
+from os import fstat
+
+def parse_depfile(depfile):
+  depfile.seek(0)
+  content = depfile.read()
+  r = content.split()
+  return list(filter(lambda x: x != '\\', r[1:]))
 
 def read_yaml(filename):
   try:
     with open(filename, 'r', encoding='utf-8') as f:
-      return yaml.safe_load(f)
+      mtime = fstat(f.fileno()).st_mtime
+      return (mtime, yaml.safe_load(f))
   except:
-    return {}
+    return (0, {})
 
 def save_yaml(filename, depend_map):
   def f():
@@ -15,19 +23,15 @@ def save_yaml(filename, depend_map):
       yaml.dump(depend_map, f)
   return f
 
-def openHeaderDependFile(filename):
-  depend_map = read_yaml(filename)
-  atexit.register(save_yaml(filename, depend_map))
-  return depend_map
+class HeaderDepend:
+  def __init__(self, filename):
+    self.mtime, self.depend_map = read_yaml(filename)
+    atexit.register(save_yaml(filename, self.depend_map))
 
-header_depend = openHeaderDependFile("header_depend.yaml")
+  def get(self, obj):
+    return self.depend_map.get(obj)
+  
+  def update(self, target, deps):
+    self.depend_map[target] = deps
 
-def get_header_depend(obj):
-  return header_depend.get(obj)
-
-def update_header_depend(target, depfile):
-  depfile.seek(0)
-  content = depfile.read()
-  r = content.split()
-  deps = list(filter(lambda x: x != '\\', r[1:]))
-  header_depend[target] = deps
+header_depend = HeaderDepend("header_depend.yaml")
