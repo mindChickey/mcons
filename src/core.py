@@ -1,13 +1,13 @@
 
-from os import path, stat
+from os import path
 
 def need_update(target: str, deps):
   if not path.exists(target): return True
+  target_mtime = path.getmtime(target)
 
-  target_stat = stat(target)
   for dep in deps:
     if not path.exists(dep):
-      raise f"error: file not found: {dep}"
-    elif target_stat.st_mtime < stat(dep).st_mtime:
+      return True
+    elif target_mtime < path.getmtime(dep):
       return True
   return False
