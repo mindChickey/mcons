@@ -25,10 +25,9 @@ header_depend = openHeaderDependFile("header_depend.yaml")
 def get_header_depend(obj):
   return header_depend.get(obj)
 
-def update_header_depend(depfile):
+def update_header_depend(target, depfile):
   depfile.seek(0)
   content = depfile.read()
   r = content.split()
-  obj = r[0][0:-1]
   deps = list(filter(lambda x: x != '\\', r[1:]))
-  header_depend[obj] = deps
+  header_depend[target] = deps

@@ -1,16 +1,13 @@
 
-# from core import memo", "Mode", "cc", "ConsModule", "need_update
-# from rules import run_command_output", "run_command", "format_command", "replace_extension", "cons_object", "pack_ar", "task
+from .src.core import need_update
+from .src.cons_module import ConsModule
 
-from .core import need_update
-from .cons_module import ConsModule
+from .src.thread_pool import batch
+from .src.header_depend import get_header_depend, update_header_depend
 
-from .thread_pool import batch
-from .header_depend import get_header_depend, update_header_depend
-
-from .rules import cons_object, pack_ar, task
-from .command import run_command_output, run_command, format_command
-from .utils import memo, replace_extension
+from .src.rules import cons_object, pack_ar, task
+from .src.command import run_command_output, run_command, format_command
+from .src.utils import memo, replace_ext
 
 __all__ = [
   "need_update", 
@@ -21,5 +18,5 @@ __all__ = [
 
   "cons_object", "pack_ar", "task",
   "run_command_output", "run_command", "format_command", 
-  "memo", "replace_extension", 
+  "memo", "replace_ext", 
 ]
