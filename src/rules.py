@@ -20,7 +20,7 @@ def cons_object(cm, src, obj, compile_templ):
   target = cm.target(obj)
   if check_depend(target):
     line = compile_templ.format(src1, target)
-    run_command(cm.build_dir, line)
+    run_command(cm, line)
     with tempfile.NamedTemporaryFile(mode='w+') as mf:
       line1 = line + f" -MM -MF {mf.name}"
       run_command_output(cm.build_dir, line1, None)

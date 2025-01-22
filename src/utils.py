@@ -1,6 +1,6 @@
 
 import threading
-from os import path, remove
+from os import path
 
 def memo(func):
   has_eval = False
@@ -14,12 +14,6 @@ def memo(func):
         has_eval = True
       return value
   return f
-
-def remove_file(name):
-  try:
-    remove(name)
-  except:
-    None
 
 def replace_ext(filename, new_extension):
   name, ext = path.splitext(filename)
