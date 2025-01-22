@@ -1,19 +1,26 @@
 
+import subprocess
 import tempfile
 from os import path
 
 from .core import compare_depends_mtime
 from .header_depend import parse_depfile, header_depend
 
-from .command import run_command, run_command_output
+from .command import run_command
 
 def update_depend(cm, target, line):
-  with tempfile.NamedTemporaryFile(mode='w+') as depfile:
-    line1 = line + f" -MM -MF {depfile.name}"
-    run_command_output(cm.build_dir, line1, None)
-    deps = parse_depfile(depfile)
-    header_depend.update(target, deps)
-    return deps
+  try:
+    with tempfile.NamedTemporaryFile(mode='w+') as depfile:
+      line1 = line + f" -MM -MF {depfile.name}"
+      result = subprocess.run(line1.split(), cwd=cm.build_dir)
+      if result.returncode == 0:
+        deps = parse_depfile(depfile)
+        header_depend.update(target, deps)
+        return deps
+      else:
+        exit(1)
+  except:
+    exit(1)
 
 def update_and_compile_if_need(cm, target, target_mtime, line):
   deps = update_depend(cm, target, line)

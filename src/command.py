@@ -3,21 +3,12 @@ from os import remove
 import subprocess
 from .cons_module import ConsModule
 
-def run_command_output(cwd, line, outfile):
-  result = subprocess.run(line.split(), cwd=cwd, stdout=outfile)
-  if result.returncode != 0:
-    raise f"error status code: {result.returncode}"
-
-def run_command(cm: ConsModule, line):
+def run_command(cm: ConsModule, line, ignore_error=False):
   cwd = cm.build_dir
   print(cwd, ": ", line)
-  result = subprocess.run(line.split(), cwd=cwd, capture_output=True)
-  if result.stderr:
-    print(result.stderr.decode('utf-8'))
-  if result.stdout:
-    print(result.stdout.decode('utf-8'))
-  if result.returncode != 0:
-    raise f"error status code: {result.returncode}"
+  result = subprocess.run(line.split(), cwd=cwd)
+  if result.returncode != 0 and not ignore_error:
+    exit(1)
 
 def format_command(templ):
   def f(cm, deps): 
