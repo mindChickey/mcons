@@ -1,5 +1,5 @@
 
-from os import path
+from os import path, remove
 from .record_dict import RecordDict
 
 mark_dict = RecordDict("mark_dict.yaml")
@@ -28,3 +28,13 @@ def need_update(target: str, deps, mark=None):
     return True
   else:
     return compare_depends_mtime(target_mtime, deps)
+
+def remove_file(name):
+  try:
+    remove(name)
+  except:
+    None
+
+def clean_all():
+  for name in mark_dict.dict1.keys():
+    remove_file(name)
