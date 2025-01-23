@@ -31,7 +31,7 @@ class RecordDict:
       with self.lock:
         return self.dict1.get(target)
   
-  def update(self, target, deps):
+  def update(self, target, value):
     with self.lock:
-      self.dict1[target] = deps
+      self.dict1[target] = value
 
