@@ -1,5 +1,8 @@
 
 from os import path
+from .record_dict import RecordDict
+
+mark_dict = RecordDict("mark_dict.yaml")
 
 def compare_depends_mtime(target_mtime, deps):
   for dep in deps:
@@ -9,9 +12,19 @@ def compare_depends_mtime(target_mtime, deps):
       return True
   return False
 
-def need_update(target: str, deps):
-  if path.exists(target): 
-    target_mtime = path.getmtime(target)
-    return compare_depends_mtime(target_mtime, deps)
-  else:
+def check_mark(target: str, target_exist, target_mtime, mark):
+  if target_exist:
+    mark0 = mark_dict.get(target, target_mtime)
+    if mark0 == mark: return False
+
+  mark_dict.update(target, mark)
+  return True
+
+def need_update(target: str, deps, mark=None):
+  target_exist = path.exists(target)
+  target_mtime = path.getmtime(target) if target_exist else 0
+
+  if check_mark(target, target_exist, target_mtime, mark):
     return True
+  else:
+    return compare_depends_mtime(target_mtime, deps)
