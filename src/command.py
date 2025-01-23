@@ -3,11 +3,12 @@ from os import remove
 import subprocess
 from .cons_module import ConsModule
 
-def run_command(cm: ConsModule, line, ignore_error=False):
+def run_command(cm: ConsModule, line, check=True):
   cwd = cm.build_dir
   print(cwd, ": ", line)
-  result = subprocess.run(line.split(), cwd=cwd)
-  if result.returncode != 0 and not ignore_error:
+  try:
+    subprocess.run(line.split(), cwd=cwd, check=check)
+  except:
     exit(1)
 
 def format_command(templ):

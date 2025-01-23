@@ -8,3 +8,4 @@
 
 # 脚本或dep文件修改
 # clean, install 和其它模式
+# watch 功能
