@@ -5,6 +5,7 @@ from os import path
 
 from .core import compare_depends_mtime
 from .header_depend import parse_depfile, header_depend
+from .compile_commands import compile_commands
 
 from .command import run_command
 
@@ -34,6 +35,7 @@ def cons_object(cm, src, obj, compile_templ):
   src1 = cm.src(src)
   target = cm.target(obj)
   line = compile_templ.format(src1, target)
+  compile_commands.push(cm.build_dir, src1, line)
 
   if not path.exists(target): 
     return update_and_compile(cm, target, line)
