@@ -21,7 +21,7 @@ def update_depend(cm, target, line):
   try:
     with tempfile.NamedTemporaryFile(mode='w+') as depfile:
       line1 = line + f" -MM -MF {depfile.name}"
-      subprocess.run(line1.split(), cwd=cm.build_dir, check=True)
+      subprocess.run(line1.split(), cwd=cm.build_dir, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
       deps = parse_depfile(depfile)
       header_depend.update(target, deps)
       return deps
