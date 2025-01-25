@@ -1,5 +1,5 @@
 
-from .src.core import need_update, clean_all
+from .src.core import need_update, clean_all, watch
 from .src.cons_module import ConsModule
 from .src.thread_pool import batch
 
@@ -9,7 +9,7 @@ from .src.command import run_command, format_command
 from .src.utils import memo, replace_ext
 
 __all__ = [
-  "need_update", "clean_all",
+  "need_update", "clean_all", "watch",
   "ConsModule",
   "batch",
 

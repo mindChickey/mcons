@@ -1,5 +1,8 @@
 
+import sys
 from os import path, remove
+from watchrun import watch_dir_cmds
+
 from .record_dict import RecordDict
 
 mark_dict = RecordDict("mark_dict.yaml")
@@ -38,3 +41,9 @@ def remove_file(name):
 def clean_all():
   for name in mark_dict.dict1.keys():
     remove_file(name)
+
+def watch(pyfile, cmds):
+  build_cmd = f"{sys.executable} {pyfile}"
+  src_dir = path.dirname(pyfile)
+  build_dir = path.curdir
+  watch_dir_cmds(src_dir, 1, [build_cmd] + cmds, [build_dir])
