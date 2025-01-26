@@ -46,4 +46,4 @@ def watch(pyfile, cmds):
   build_cmd = f"{sys.executable} {pyfile}"
   src_dir = path.dirname(pyfile)
   build_dir = path.curdir
-  watch_dir_cmds(src_dir, 1, [build_cmd] + cmds, [build_dir])
+  watch_dir_cmds(src_dir, 1, [build_cmd] + cmds, [build_dir], run_now=True)
