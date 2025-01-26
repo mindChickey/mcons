@@ -14,4 +14,4 @@ def cons_main_exe():
   return task(cm, "main", deps, cmd)
 
 if __name__ == "__main__":
-  run_cons(cons_main_exe)
+  run_cons(__file__, cons_main_exe)
