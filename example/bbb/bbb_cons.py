@@ -3,7 +3,7 @@ from mcons import pack_ar, ConsModule
 
 cm = ConsModule(__file__)
 
-compile_templ = "clang -c {0} -o {1}"
+compile_templ = "clang {FLAGS} -c {0} -o {1}"
 
 def cons_bbb_a():
   return pack_ar(cm, "libBBB.a", ["bbb.c", "ccc.c"], compile_templ)

@@ -8,6 +8,7 @@ from .record_dict import RecordDict
 from .compile_commands import compile_commands
 
 from .command import run_command
+from .run_mode import get_config
 
 header_depend = RecordDict("header_depend.yaml")
 
@@ -47,7 +48,7 @@ def object_need_update(cm, target: str, line):
 def cons_object(cm, src, obj, compile_templ):
   src1 = cm.src(src)
   target = cm.target(obj)
-  line = compile_templ.format(src1, target)
+  line = compile_templ.format(src1, target, **get_config())
   compile_commands.push(cm.build_dir, src1, line)
 
   if object_need_update(cm, target, line):
