@@ -8,7 +8,7 @@ from .record_dict import RecordDict
 from .compile_commands import compile_commands
 
 from .command import run_command
-from .run_mode import get_config
+from .config import get_config
 
 header_depend = RecordDict("header_depend.yaml")
 

@@ -2,7 +2,7 @@
 from os import remove
 import subprocess
 from .cons_module import ConsModule
-from .run_mode import get_config
+from .config import get_config
 
 def run_command(cm: ConsModule, line, check=True):
   cwd = cm.build_dir
