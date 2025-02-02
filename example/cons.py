@@ -14,4 +14,5 @@ def cons_main_exe():
   return task(cm, "main", deps, cmd)
 
 if __name__ == "__main__":
-  run_cons(__file__, cons_main_exe)
+  default_config = {"FLAGS": "-O3"}
+  run_cons(__file__, cons_main_exe, default_config=default_config)
