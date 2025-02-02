@@ -7,14 +7,17 @@ def add_init_command(subparsers):
   init_parser.add_argument("-D", action='append', metavar="KEY[=VALUE]", help="define key value pair")
   init_parser.set_defaults(mode="init")
 
+def add_build_argv(build_parser):
+  build_parser.add_argument("-j", "--jobs", metavar="N", help="allow N jobs")
+
 def add_build_command(subparsers):
   build_parser = subparsers.add_parser("build", help="build project")
-  build_parser.add_argument("-j", "--jobs", metavar="N", help="allow N jobs")
+  add_build_argv(build_parser)
   build_parser.set_defaults(mode="build")
 
 def add_watch_command(subparsers):
   watch_parser = subparsers.add_parser("watch", help="watch mode")
-  watch_parser.add_argument("-j", "--jobs", metavar="N", help="allow N jobs")
+  add_build_argv(watch_parser)
   watch_parser.add_argument("-R", action='append', metavar="command", help="run command")
   watch_parser.set_defaults(mode="watch")
 
