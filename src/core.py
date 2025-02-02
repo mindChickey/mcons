@@ -1,6 +1,6 @@
 
 import sys
-from os import path, remove
+from os import path
 from watchrun import watch_dir_cmds
 
 from .env import env
@@ -29,16 +29,6 @@ def need_update(target: str, deps, mark=None):
     return True
   else:
     return compare_depends_mtime(target_mtime, deps)
-
-def remove_file(name):
-  try:
-    remove(name)
-  except:
-    None
-
-def clean_all():
-  for name in env.mark_dict.dict1.keys():
-    remove_file(name)
 
 def watch(pyfile, build_argv, cmds):
   build_cmd = f"{sys.executable} {pyfile} build " + ' '.join(build_argv)

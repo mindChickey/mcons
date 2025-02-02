@@ -4,7 +4,8 @@ import argparse
 
 from .env import env, save_config, read_config
 from .parse_args import parse_args
-from .core import clean_all, watch
+from .core import watch
+from .run_clean import run_clean
 
 def run_init(args: argparse.Namespace, default_config):
   defs = [] if args.D == None else args.D
@@ -38,9 +39,6 @@ def run_watch(pyfile, args: argparse.Namespace, argv):
   build_argv = get_build_argv(argv)
   watch(pyfile, build_argv, cmds)
 
-def run_clean(args):
-  clean_all()
-  
 def run_cons(pyfile, cons, argv=None, default_config={}):
   argv1 = argv if argv else sys.argv[1:]
   args = parse_args(argv1)
@@ -52,4 +50,4 @@ def run_cons(pyfile, cons, argv=None, default_config={}):
   elif mode == "watch":
     run_watch(pyfile, args, argv1)
   elif mode == "clean":
-    run_clean(args)
+    run_clean()
