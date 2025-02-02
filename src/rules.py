@@ -1,6 +1,6 @@
 
 from .env import batch
-from .core import need_update
+from .check_depend import need_update
 from .command import format_command
 from .utils import replace_ext
 from .object_rule import cons_object

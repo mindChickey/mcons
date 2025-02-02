@@ -3,7 +3,7 @@ import subprocess
 import tempfile
 from os import path
 
-from .core import check_mark, compare_depends_mtime, need_update
+from .check_depend import check_mark, compare_depends_mtime
 from .command import run_command
 from .env import env
 

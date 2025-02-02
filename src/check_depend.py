@@ -4,9 +4,11 @@ from .env import env
 
 def compare_depends_mtime(target_mtime, deps):
   for dep in deps:
-    if not path.exists(dep):
-      return True
-    elif target_mtime < path.getmtime(dep):
+    try:
+      dep_mtime = path.getmtime(dep)
+      if target_mtime < dep_mtime:
+        return True
+    except:
       return True
   return False
 

@@ -1,5 +1,5 @@
 
-from .src.core import need_update
+from .src.check_depend import need_update
 from .src.cons_module import ConsModule
 
 from .src.object_rule import cons_object
