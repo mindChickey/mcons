@@ -1,5 +1,5 @@
 
-from .src.core import need_update, watch
+from .src.core import need_update
 from .src.cons_module import ConsModule
 
 from .src.object_rule import cons_object
@@ -10,7 +10,7 @@ from .src.run_mode import run_cons
 from .src.env import get_config, batch
 
 __all__ = [
-  "need_update", "watch",
+  "need_update",
   "ConsModule",
 
   "cons_object", 

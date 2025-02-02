@@ -8,6 +8,7 @@ from .compile_commands import CompileCommands
 class Env:
   def __init__(self):
     self.config = {}
+    self.config_filename = "mcons_config.yaml"
     self.mark_dict_filename = "mark_dict.yaml"
     self.header_depend_filename = "header_depend.yaml"
     self.compile_commands_filename = "compile_commands.json"
@@ -28,7 +29,7 @@ def get_config():
 
 def read_config(env):
   try:
-    config_mtime, config_content = read_yaml("./mcons_config.yaml")
+    config_mtime, config_content = read_yaml(env.config_filename)
     if config_content["mcons_version"] != "1.0.1":
       print("mcons_config.yaml version mismatch, please run")
       print(sys.argv[0] + " init")
@@ -47,4 +48,4 @@ def save_config(env, defs):
     env.config[p[0]] = value
   
   config_content = {"mcons_version": "1.0.1", "config": env.config}
-  save_yaml("mcons_config.yaml", config_content)()
+  save_yaml(env.config_filename, config_content)()

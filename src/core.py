@@ -1,8 +1,5 @@
 
-import sys
 from os import path
-from watchrun import watch_dir_cmds
-
 from .env import env
 
 def compare_depends_mtime(target_mtime, deps):
@@ -29,9 +26,3 @@ def need_update(target: str, deps, mark=None):
     return True
   else:
     return compare_depends_mtime(target_mtime, deps)
-
-def watch(pyfile, build_argv, cmds):
-  build_cmd = f"{sys.executable} {pyfile} build " + ' '.join(build_argv)
-  src_dir = path.dirname(pyfile)
-  build_dir = path.curdir
-  watch_dir_cmds(src_dir, 1, [build_cmd] + cmds, [build_dir], run_now=True)
