@@ -32,5 +32,3 @@ class CompileCommands:
     with self.lock:
       item = {"directory": cwd, "file": file, "command": command}
       self.commands_dict[file] = item
-
-compile_commands = CompileCommands("compile_commands.json")

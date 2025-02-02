@@ -24,4 +24,3 @@ class ConsModule:
 
   def target(self, file):
     return path.join(self.build_dir, file)
-

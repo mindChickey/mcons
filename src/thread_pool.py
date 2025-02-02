@@ -3,8 +3,8 @@ import concurrent.futures
 import atexit
 
 class ThreadPool:
-  def __init__(self):
-    self.executor = concurrent.futures.ThreadPoolExecutor()
+  def __init__(self, thread_num):
+    self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=thread_num)
     atexit.register(lambda: self.executor.shutdown())
 
   def batch(self, tasks):
@@ -22,8 +22,3 @@ class ThreadPool:
     results0 = [future.result() for future in futures[0:i]]
     results.reverse()
     return results0 + results
-
-thread_pool = ThreadPool()
-
-def batch(tasks):
-  return thread_pool.batch(tasks)

@@ -34,4 +34,3 @@ class RecordDict:
   def update(self, target, value):
     with self.lock:
       self.dict1[target] = value
-

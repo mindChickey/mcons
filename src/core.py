@@ -3,9 +3,7 @@ import sys
 from os import path, remove
 from watchrun import watch_dir_cmds
 
-from .record_dict import RecordDict
-
-mark_dict = RecordDict("mark_dict.yaml")
+from .env import env
 
 def compare_depends_mtime(target_mtime, deps):
   for dep in deps:
@@ -17,10 +15,10 @@ def compare_depends_mtime(target_mtime, deps):
 
 def check_mark(target: str, target_exist, target_mtime, mark):
   if target_exist:
-    mark0 = mark_dict.get(target, target_mtime)
+    mark0 = env.mark_dict.get(target, target_mtime)
     if mark0 == mark: return False
 
-  mark_dict.update(target, mark)
+  env.mark_dict.update(target, mark)
   return True
 
 def need_update(target: str, deps, mark=None):
@@ -39,7 +37,7 @@ def remove_file(name):
     None
 
 def clean_all():
-  for name in mark_dict.dict1.keys():
+  for name in env.mark_dict.dict1.keys():
     remove_file(name)
 
 def watch(pyfile, cmds):
