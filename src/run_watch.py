@@ -6,12 +6,6 @@ from watchrun import watch_dir_cmds
 
 from .run_build import add_build_argv
 
-def add_watch_command(subparsers, func):
-  watch_parser = subparsers.add_parser("watch", help="watch mode")
-  add_build_argv(watch_parser)
-  watch_parser.add_argument("-R", action='append', metavar="command", help="run command")
-  watch_parser.set_defaults(func=func)
-
 def get_build_cmd(pyfile, args: argparse.Namespace):
   argv = "-j" + args.jobs if args.jobs else ""
   return f"{sys.executable} {pyfile} build " + argv
@@ -28,7 +22,9 @@ def run_watch(pyfile):
     watch(pyfile, [build_cmd] + cmds)
   return f
 
-def watch_mode(pyfile):
-  def f(subparsers):
-    add_watch_command(subparsers, run_watch(pyfile))
-  return f
+def reg_watch_mode(subparsers, pyfile):
+  func = run_watch(pyfile)
+  watch_parser = subparsers.add_parser("watch", help="watch mode")
+  add_build_argv(watch_parser)
+  watch_parser.add_argument("-R", action='append', metavar="command", help="run command")
+  watch_parser.set_defaults(func=func)

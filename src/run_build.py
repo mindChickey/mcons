@@ -6,11 +6,6 @@ from .env import env, read_config
 def add_build_argv(build_parser):
   build_parser.add_argument("-j", "--jobs", metavar="N", help="allow N jobs")
 
-def add_build_command(subparsers, func):
-  build_parser = subparsers.add_parser("build", help="build project")
-  add_build_argv(build_parser)
-  build_parser.set_defaults(func=func)
-
 def parse_jobs(jobs):
   if jobs == None:
     return None
@@ -28,7 +23,8 @@ def run_build(cons):
     cons()
   return f
 
-def build_mode(cons):
-  def f(subparsers):
-    add_build_command(subparsers, run_build(cons))
-  return f
+def reg_build_mode(subparsers, cons):
+  func = run_build(cons)
+  build_parser = subparsers.add_parser("build", help="build project")
+  add_build_argv(build_parser)
+  build_parser.set_defaults(func=func)

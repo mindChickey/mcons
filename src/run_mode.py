@@ -1,11 +1,10 @@
 
 import argparse
 
-def make_parser(modes):
+def make_parser(reg_modes):
   parser = argparse.ArgumentParser()
   subparsers = parser.add_subparsers()
-  for mode in modes:
-    mode(subparsers)
+  reg_modes(subparsers)
   return parser
 
 def parse_args(parser, argv=None):
@@ -16,7 +15,7 @@ def parse_args(parser, argv=None):
     parser.print_help()
     exit(0)
 
-def run(modes, argv=None):
-  parser = make_parser(modes)
+def run(reg_modes, argv=None):
+  parser = make_parser(reg_modes)
   args = parse_args(parser, argv)
   return args.func(args)

@@ -4,10 +4,6 @@ from os import remove
 from .record_dict import read_yaml
 from .env import env
 
-def add_clean_command(subparsers):
-  watch_parser = subparsers.add_parser("clean", help="clean mode")
-  watch_parser.set_defaults(func=run_clean)
-
 def remove_file(name):
   try:
     remove(name)
@@ -23,7 +19,6 @@ def run_clean(args):
   for name in mark_dict.keys():
     remove_file(name)
 
-def clean_mode():
-  def f(subparsers):
-    add_clean_command(subparsers)
-  return f
+def reg_clean_mode(subparsers):
+  watch_parser = subparsers.add_parser("clean", help="clean mode")
+  watch_parser.set_defaults(func=run_clean)
