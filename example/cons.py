@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from mcons import batch, cons_object, format_command, task, ConsModule, init_mode, clean_mode, run, build_mode
+from mcons import batch, cons_object, format_command, task, ConsModule, init_mode, clean_mode, run, build_mode, watch_mode
 from bbb.bbb_cons import cons_bbb_a, compile_templ
 
 cm = ConsModule(__file__)
@@ -17,7 +17,7 @@ if __name__ == "__main__":
   modes = [
     init_mode({"FLAGS": "-O3"}),
     build_mode(cons_main_exe),
-    # watch_mode(__file__),
+    watch_mode(__file__),
     clean_mode()
   ]
   run(modes)

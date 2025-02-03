@@ -12,6 +12,7 @@ from .src.run_mode import run
 from .src.run_init import init_mode
 from .src.run_clean import clean_mode
 from .src.run_build import build_mode
+from .src.run_watch import watch_mode
 
 __all__ = [
   "need_update",
@@ -24,5 +25,5 @@ __all__ = [
   "get_config", "batch",
 
   "run",
-  "init_mode", "clean_mode", "build_mode"
+  "init_mode", "clean_mode", "build_mode", "watch_mode"
 ]
