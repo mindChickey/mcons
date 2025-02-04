@@ -1,7 +1,7 @@
 
-from .env import batch
+from .env import batch, env
 from .check_depend import need_update
-from .command import format_command
+from .command import run_command
 from .utils import replace_ext
 from .object_rule import cons_object
 
@@ -13,11 +13,12 @@ def cons_object_list(cm, sources, ext, compile_templ):
 
 def pack_ar(cm, name, sources, compile_templ):
   objects = cons_object_list(cm, sources, ".o", compile_templ)
-  cmd = format_command(f"ar rcs {name} {' '.join(objects)}")
+  cmd = "ar rcs {1} {0}"
   return task(cm, name, objects, cmd)
 
-def task(cm, name, deps, func):
+def task(cm, name, deps, templ):
   target = cm.target(name)
   if need_update(target, deps):
-    func(cm, deps)
+    deps1 = ' '.join(deps)
+    run_command(cm, templ.format(deps1, target, **env.config))
   return target
