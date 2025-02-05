@@ -18,7 +18,8 @@ def pack_ar(cm, name, sources, compile_templ):
 
 def task(cm, name, deps, templ):
   target = cm.target(name)
-  if need_update(target, deps):
-    deps1 = ' '.join(deps)
-    run_command(cm, templ.format(deps1, target, **env.config))
+  deps1 = ' '.join(deps)
+  cmd = templ.format(deps1, target, **env.config)
+  if need_update(target, deps, cmd):
+    run_command(cm, cmd)
   return target

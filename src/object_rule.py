@@ -14,14 +14,16 @@ def parse_depfile(depfile):
   return list(filter(lambda x: x != '\\', r[1:]))
 
 def update_depend(cm, target, line):
+  cwd = cm.build_dir
   try:
     with tempfile.NamedTemporaryFile(mode='w+') as depfile:
       line1 = line + f" -MM -MF {depfile.name}"
-      subprocess.run(line1.split(), cwd=cm.build_dir, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+      subprocess.run(line1.split(), cwd=cwd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
       deps = parse_depfile(depfile)
       env.header_depend.update(target, deps)
       return deps
   except:
+    print("update_depend error:", cwd, ":", line)
     exit(1)
 
 def get_depends(cm, target, target_exist, target_mtime, line):
