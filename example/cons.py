@@ -14,7 +14,7 @@ def cons_main_exe():
   return task(cm, "main", deps, cmd)
 
 def reg_modes(sp):
-  reg_init_mode(sp, {"FLAGS": "-O3"}),
+  reg_init_mode(sp, default_config={"FLAGS": "-O3"}),
   reg_build_mode(sp, cons_main_exe),
   reg_watch_mode(sp, __file__),
   reg_clean_mode(sp)

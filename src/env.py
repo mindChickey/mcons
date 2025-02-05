@@ -41,11 +41,6 @@ def read_config(env):
     print(sys.argv[0] + " init")
     exit(1)
 
-def save_config(env, defs):
-  for pair in defs:
-    p = pair.split("=", 1)
-    value = True if len(p) == 1 else p[1]
-    env.config[p[0]] = value
-  
+def save_config(env):
   config_content = {"mcons_version": "1.0.1", "config": env.config}
   save_yaml(env.config_filename, config_content)()
