@@ -21,5 +21,6 @@ def task(cm, name, deps, templ):
   deps1 = ' '.join(deps)
   cmd = templ.format(deps1, target, **env.config)
   if need_update(target, deps, cmd):
+    print(f"\033[32;1m{target}\033[0m") 
     run_command(cm, cmd)
   return target

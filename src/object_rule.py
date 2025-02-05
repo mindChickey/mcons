@@ -49,6 +49,7 @@ def cons_object(cm, src, obj, compile_templ):
   env.compile_commands.push(cm.build_dir, src1, line)
 
   if object_need_update(cm, target, line):
+    print(f"\033[32m{target}\033[0m")
     update_depend(cm, target, line)
     run_command(cm, line)
   return target
