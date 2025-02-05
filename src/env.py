@@ -27,6 +27,9 @@ def batch(tasks):
 def get_config():
   return env.config
 
+def config_format(templ):
+  return templ.format(**env.config)
+
 def read_config(env):
   try:
     config_mtime, config_content = read_yaml(env.config_filename)
