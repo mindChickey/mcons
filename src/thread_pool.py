@@ -8,13 +8,15 @@ class ThreadPool:
     atexit.register(lambda: self.executor.shutdown())
 
   def batch(self, tasks):
-    futures = [self.executor.submit(task) for task in tasks]
+    tasks1 = list(tasks)
+    futures = [self.executor.submit(task) for task in tasks1]
     results = []
-    i = len(tasks)
+    i = len(tasks1)
     while i > 0:
       index = i - 1
       if futures[index].cancel():
-        results.append(tasks[index]())
+        result = tasks1[index]()
+        results.append(result)
         i = index
       else:
         break

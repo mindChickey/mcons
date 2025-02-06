@@ -1,30 +1,27 @@
 
-from os import path
+from typing import Iterable
+
+from .cons_module import ConsNode
 from .env import env
 
-def compare_depends_mtime(target_mtime, deps):
+def compare_depends_mtime(target: ConsNode, deps: Iterable[ConsNode]):
   for dep in deps:
-    try:
-      dep_mtime = path.getmtime(dep)
-      if target_mtime < dep_mtime:
-        return True
-    except:
+    if not dep.exist:
+      return True
+    elif target.mtime < dep.mtime:
       return True
   return False
 
-def check_mark(target: str, target_exist, target_mtime, mark):
-  if target_exist:
-    mark0 = env.mark_dict.get(target, target_mtime)
+def check_mark(target: ConsNode, mark):
+  if target.exist:
+    mark0 = env.mark_dict.get(target, target.mtime)
     if mark0 == mark: return False
 
-  env.mark_dict.update(target, mark)
+  env.mark_dict.update(target.filepath, mark)
   return True
 
-def need_update(target: str, deps, mark=None):
-  target_exist = path.exists(target)
-  target_mtime = path.getmtime(target) if target_exist else 0
-
-  if check_mark(target, target_exist, target_mtime, mark):
+def need_update(target: ConsNode, deps: Iterable[ConsNode], mark=""):
+  if check_mark(target, mark):
     return True
   else:
-    return compare_depends_mtime(target_mtime, deps)
+    return compare_depends_mtime(target, deps)
