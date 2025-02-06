@@ -1,7 +1,7 @@
 
 from os import remove
 
-from .record_dict import read_yaml
+from .cons_module import ConsModule
 from .env import env
 
 def remove_file(name):
@@ -10,19 +10,26 @@ def remove_file(name):
   except:
     None
 
-def run_clean(extra_files):
+def clean_rule(cm: ConsModule, name: str, build_func):
+  target = cm.target(name)
+  print("clean", target)
+  remove_file(target.filepath)
+  return target
+
+def run_clean(cons, extra_files):
   def f(args):
-    mtime, mark_dict = read_yaml(env.mark_dict_filename)
+    env.init_clean(None)
     remove_file(env.mark_dict_filename)
     remove_file(env.header_depend_filename)
     remove_file(env.compile_commands_filename)
 
-    for name in mark_dict.keys():
-      remove_file(name)
     for name in extra_files:
       remove_file(name)
+
+    env.rule = clean_rule
+    cons()
   return f
 
-def reg_clean_mode(subparsers, extra_files=[]):
+def reg_clean_mode(subparsers, cons, extra_files=[]):
   watch_parser = subparsers.add_parser("clean", help="clean mode")
-  watch_parser.set_defaults(func=run_clean(extra_files))
+  watch_parser.set_defaults(func=run_clean(cons, extra_files))

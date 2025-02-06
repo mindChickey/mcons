@@ -17,7 +17,7 @@ def reg_modes(sp):
   reg_init_mode(sp, default_config={"FLAGS": "-O3"}),
   reg_build_mode(sp, cons_main_exe),
   reg_watch_mode(sp, __file__),
-  reg_clean_mode(sp)
+  reg_clean_mode(sp, cons_main_exe)
 
 if __name__ == "__main__":
   run(reg_modes)

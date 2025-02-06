@@ -30,6 +30,9 @@ class Env:
     self.node_dict = {}
     self.rule = empty_rule
 
+  def init_clean(self, thread_num):
+    self.thread_pool = ThreadPool(thread_num)
+
   def init_build(self, thread_num):
     self.mark_dict = RecordDict(self.mark_dict_filename)
     self.header_depend = RecordDict(self.header_depend_filename)
