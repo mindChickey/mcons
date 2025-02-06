@@ -14,6 +14,10 @@ def memo_dict(dict, f, key):
   else:
     return r
 
+def empty_rule(cm, name: str, build_func):
+  print("env.rule is empty")
+  exit(1)
+
 class Env:
   def __init__(self):
     self.config = {}
@@ -24,6 +28,7 @@ class Env:
 
     self.lock = threading.Lock()
     self.node_dict = {}
+    self.rule = empty_rule
 
   def init_build(self, thread_num):
     self.mark_dict = RecordDict(self.mark_dict_filename)
@@ -39,3 +44,6 @@ env = Env()
 
 def batch(tasks):
   return env.thread_pool.batch(tasks)
+
+def rule(cm, name:str, build_func):
+  return env.rule(cm, name, build_func)

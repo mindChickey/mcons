@@ -1,6 +1,7 @@
 
 import argparse
 
+from .cons_module import ConsModule
 from .env import env
 from .config import read_config
 
@@ -16,11 +17,16 @@ def parse_jobs(jobs):
     print("jobs option error:", jobs)
     exit(1)
 
+def build_rule(cm: ConsModule, name: str, build_func):
+  target = cm.target(name)
+  return build_func(cm, target)
+
 def run_build(cons):
   def f(args: argparse.Namespace):
     read_config()
     thread_num = parse_jobs(args.jobs)
     env.init_build(thread_num)
+    env.rule = build_rule
     cons()
   return f
 
