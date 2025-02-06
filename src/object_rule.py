@@ -29,7 +29,7 @@ def update_depend(cm: ConsModule, target: ConsNode, line: str):
 
 def get_depends(cm: ConsModule, target: ConsNode, line: str):
   if target.exist:
-    deps = env.header_depend.get(target, target.mtime)
+    deps = env.header_depend.get(target.filepath, target.mtime)
     if deps: return deps
   return update_depend(cm, target, line)
 
@@ -38,7 +38,8 @@ def object_need_update(cm: ConsModule, target: ConsNode, line: str):
     return True
   else:
     deps = get_depends(cm, target, line)
-    return compare_depends_mtime(target, deps)
+    deps1 = map(cm.src, deps)
+    return compare_depends_mtime(target, deps1)
 
 def cons_object(cm: ConsModule, src: str, obj: str, compile_templ: str):
   src1 = cm.src(src)
@@ -50,4 +51,5 @@ def cons_object(cm: ConsModule, src: str, obj: str, compile_templ: str):
     print(f"\033[32m{target}\033[0m")
     update_depend(cm, target, line)
     run_command(cm, line)
+    target.update()
   return target

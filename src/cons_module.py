@@ -36,10 +36,10 @@ class ConsModule:
     self.build_dir = get_build_dir(self.src_dir, root_src_dir)
     makedirs(self.build_dir, exist_ok=True)
 
-  def src(self, file):
+  def src(self, file) -> ConsNode:
     filepath = path.join(self.src_dir, file)
     return env.get_node(ConsNode, filepath)
 
-  def target(self, file):
+  def target(self, file) -> ConsNode:
     filepath = path.join(self.build_dir, file)
     return env.get_node(ConsNode, filepath)

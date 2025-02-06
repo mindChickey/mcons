@@ -14,7 +14,7 @@ def compare_depends_mtime(target: ConsNode, deps: Iterable[ConsNode]):
 
 def check_mark(target: ConsNode, mark):
   if target.exist:
-    mark0 = env.mark_dict.get(target, target.mtime)
+    mark0 = env.mark_dict.get(target.filepath, target.mtime)
     if mark0 == mark: return False
 
   env.mark_dict.update(target.filepath, mark)
