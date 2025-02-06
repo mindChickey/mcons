@@ -19,8 +19,7 @@ def parse_jobs(jobs):
 
 def build_rule(cm: ConsModule, name: str, build_func):
   target = cm.target(name)
-  build_func(cm, target)
-  return target
+  return build_func(cm, target)
 
 def run_build(cons):
   def f(args: argparse.Namespace):
@@ -28,7 +27,7 @@ def run_build(cons):
     thread_num = parse_jobs(args.jobs)
     env.init_build(thread_num)
     env.rule = build_rule
-    return cons()
+    cons()
   return f
 
 def reg_build_mode(subparsers, cons):
