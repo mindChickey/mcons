@@ -9,25 +9,21 @@ from .object_rule import cons_object
 
 def cons_object_list(cm: ConsModule, sources: Iterable[str], ext: str, compile_templ: str):
   def f(src):
-    target = cm.target(replace_ext(src, ext))
-    return lambda: cons_object(src, compile_templ)(cm, target)
+    return lambda: cons_object(cm, src, replace_ext(src, ext), compile_templ)
   tasks = map(f, sources)
   return batch(tasks)
 
-def pack_ar(sources: Iterable[str], compile_templ: str):
-  def f(cm: ConsModule, target: ConsNode):
-    objects = cons_object_list(cm, sources, ".o", compile_templ)
-    cmd = "ar rcs {1} {0}"
-    return task(objects, cmd)(cm, target)
-  return f
+def pack_ar(cm: ConsModule, name: str, sources: Iterable[str], compile_templ: str):
+  objects = cons_object_list(cm, sources, ".o", compile_templ)
+  cmd = "ar rcs {1} {0}"
+  return task(cm, name, objects, cmd)
 
-def task(deps: Iterable[ConsNode], templ: str):
-  def f(cm: ConsModule, target: ConsNode):
-    deps1 = ' '.join(map(str, deps))
-    cmd = templ.format(deps1, target, **env.config)
-    if need_update(target, deps, cmd):
-      print(f"\033[32;1m{target}\033[0m") 
-      run_command(cm, cmd)
-      target.update()
-    return target
-  return f
+def task(cm: ConsModule, name: str, deps: Iterable[ConsNode], templ: str):
+  target = cm.target(name)
+  deps1 = ' '.join(map(str, deps))
+  cmd = templ.format(deps1, target, **env.config)
+  if need_update(target, deps, cmd):
+    print(f"\033[32;1m{target}\033[0m") 
+    run_command(cm, cmd)
+    target.update()
+  return target

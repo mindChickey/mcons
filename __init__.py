@@ -1,10 +1,12 @@
 
+from .src.check_depend import need_update
 from .src.cons_module import ConsModule
 
 from .src.object_rule import cons_object
 from .src.rules import pack_ar, task, cons_object_list
+from .src.command import run_command
 from .src.utils import memo, replace_ext
-from .src.env import batch, rule
+from .src.env import batch
 from .src.config import get_config, config_format
 
 from .src.run_mode import run
@@ -14,12 +16,14 @@ from .src.run_build import reg_build_mode
 from .src.run_watch import reg_watch_mode
 
 __all__ = [
+  "need_update",
   "ConsModule",
 
   "cons_object", 
   "pack_ar", "task", "cons_object_list",
+  "run_command",
   "memo", "replace_ext",
-  "batch", "rule",
+  "batch",
   "get_config", "config_format",
 
   "run",

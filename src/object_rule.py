@@ -41,16 +41,15 @@ def object_need_update(cm: ConsModule, target: ConsNode, line: str):
     deps1 = map(cm.src, deps)
     return compare_depends_mtime(target, deps1)
 
-def cons_object(src: str, compile_templ: str):
-  def f(cm: ConsModule, target: ConsNode):
-    src1 = cm.src(src)
-    line = compile_templ.format(src1, target, **env.config)
-    env.compile_commands.push(cm.build_dir, src1.filepath, line)
+def cons_object(cm: ConsModule, src: str, obj: str, compile_templ: str):
+  src1 = cm.src(src)
+  target = cm.target(obj)
+  line = compile_templ.format(src1, target, **env.config)
+  env.compile_commands.push(cm.build_dir, src1.filepath, line)
 
-    if object_need_update(cm, target, line):
-      print(f"\033[32m{target}\033[0m")
-      update_depend(cm, target, line)
-      run_command(cm, line)
-      target.update()
-    return target
-  return f
+  if object_need_update(cm, target, line):
+    print(f"\033[32m{target}\033[0m")
+    update_depend(cm, target, line)
+    run_command(cm, line)
+    target.update()
+  return target
