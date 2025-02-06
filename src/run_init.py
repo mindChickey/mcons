@@ -1,7 +1,8 @@
 
 import argparse
 
-from .env import env, save_config
+from .env import env
+from .config import save_config
 
 def put_defs(config, D):
   defs = [] if D == None else D
@@ -16,7 +17,7 @@ def run_init(put_config, default_config):
     put_defs(config, args.D)
     put_config(config)
     env.config = config
-    save_config(env)
+    save_config()
   return f
 
 def empty_put_config(config):

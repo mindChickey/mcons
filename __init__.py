@@ -6,7 +6,8 @@ from .src.object_rule import cons_object
 from .src.rules import pack_ar, task, cons_object_list
 from .src.command import run_command
 from .src.utils import memo, replace_ext
-from .src.env import get_config, batch, config_format
+from .src.env import batch
+from .src.config import get_config, config_format
 
 from .src.run_mode import run
 from .src.run_init import  reg_init_mode
@@ -22,7 +23,8 @@ __all__ = [
   "pack_ar", "task", "cons_object_list",
   "run_command",
   "memo", "replace_ext",
-  "get_config", "batch", "config_format",
+  "batch",
+  "get_config", "config_format",
 
   "run",
   "reg_init_mode", "reg_clean_mode", "reg_build_mode", "reg_watch_mode"

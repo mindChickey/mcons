@@ -1,7 +1,8 @@
 
 import argparse
 
-from .env import env, read_config
+from .env import env
+from .config import read_config
 
 def add_build_argv(build_parser):
   build_parser.add_argument("-j", "--jobs", metavar="N", help="allow N jobs")
@@ -17,7 +18,7 @@ def parse_jobs(jobs):
 
 def run_build(cons):
   def f(args: argparse.Namespace):
-    read_config(env)
+    read_config()
     thread_num = parse_jobs(args.jobs)
     env.init_build(thread_num)
     cons()

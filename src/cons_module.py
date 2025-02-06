@@ -1,16 +1,8 @@
 
 from sys import argv
 from os import path, makedirs
-import threading
 
-def memo_dict(dict, f, key):
-  r = dict.get(key)
-  if r == None:
-    r1 = f(key)
-    dict[key] = r1
-    return r1
-  else:
-    return r
+from .env import env
 
 def get_build_dir(src_dir, root_src_dir):
   if root_src_dir != path.commonpath([root_src_dir, src_dir]):
@@ -43,16 +35,11 @@ class ConsModule:
     self.src_dir = path.abspath(path.dirname(pyfile))
     self.build_dir = get_build_dir(self.src_dir, root_src_dir)
     makedirs(self.build_dir, exist_ok=True)
-    self.src_dict = {}
-    self.target_dict = {}
-    self.lock = threading.Lock()
 
   def src(self, file):
     filepath = path.join(self.src_dir, file)
-    with self.lock:
-      return memo_dict(self.src_dict, ConsNode, filepath)
+    return env.get_node(ConsNode, filepath)
 
   def target(self, file):
     filepath = path.join(self.build_dir, file)
-    with self.lock:
-      return memo_dict(self.target_dict, ConsNode, filepath)
+    return env.get_node(ConsNode, filepath)

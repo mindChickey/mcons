@@ -1,9 +1,18 @@
 
-import sys
+import threading
 
-from .record_dict import read_yaml, save_yaml, RecordDict
+from .record_dict import RecordDict
 from .thread_pool import ThreadPool
 from .compile_commands import CompileCommands
+
+def memo_dict(dict, f, key):
+  r = dict.get(key)
+  if r == None:
+    r1 = f(key)
+    dict[key] = r1
+    return r1
+  else:
+    return r
 
 class Env:
   def __init__(self):
@@ -13,37 +22,20 @@ class Env:
     self.header_depend_filename = "header_depend.yaml"
     self.compile_commands_filename = "compile_commands.json"
 
+    self.lock = threading.Lock()
+    self.node_dict = {}
+
   def init_build(self, thread_num):
     self.mark_dict = RecordDict(self.mark_dict_filename)
     self.header_depend = RecordDict(self.header_depend_filename)
     self.compile_commands = CompileCommands(self.compile_commands_filename)
     self.thread_pool = ThreadPool(thread_num)
 
+  def get_node(self, f, filepath):
+    with self.lock:
+      return memo_dict(self.node_dict, f, filepath)
+
 env = Env()
 
 def batch(tasks):
   return env.thread_pool.batch(tasks)
-
-def get_config():
-  return env.config
-
-def config_format(templ):
-  return templ.format(**env.config)
-
-def read_config(env):
-  try:
-    config_mtime, config_content = read_yaml(env.config_filename)
-    if config_content["mcons_version"] != "1.0.1":
-      print("mcons_config.yaml version mismatch, please run")
-      print(sys.argv[0] + " init")
-      exit(1)
-    else:
-      env.config = config_content["config"]
-  except:
-    print("mcons_config.yaml not found, please run")
-    print(sys.argv[0] + " init")
-    exit(1)
-
-def save_config(env):
-  config_content = {"mcons_version": "1.0.1", "config": env.config}
-  save_yaml(env.config_filename, config_content)()
