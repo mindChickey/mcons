@@ -15,7 +15,7 @@ def parse_args(parser, argv=None):
     parser.print_help()
     exit(0)
 
-def run(reg_modes, argv=None):
+def run_cons(reg_modes, argv=None):
   parser = make_parser(reg_modes)
   args = parse_args(parser, argv)
   return args.func(args)

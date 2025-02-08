@@ -5,15 +5,6 @@ from .record_dict import RecordDict
 from .thread_pool import ThreadPool
 from .compile_commands import CompileCommands
 
-def memo_dict(dict, f, key):
-  r = dict.get(key)
-  if r == None:
-    r1 = f(key)
-    dict[key] = r1
-    return r1
-  else:
-    return r
-
 class Env:
   def __init__(self):
     self.config = {}
@@ -33,10 +24,6 @@ class Env:
 
   def init_clean(self, thread_num):
     self.thread_pool = ThreadPool(thread_num)
-
-  def get_node(self, f, filepath):
-    with self.lock:
-      return memo_dict(self.node_dict, f, filepath)
 
 env = Env()
 

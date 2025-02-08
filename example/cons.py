@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from mcons import batch, object_rule, task, ConsModule, run, reg_init_mode, reg_clean_mode, reg_build_mode, reg_watch_mode
+from mcons import batch, object_rule, task, ConsModule, run_cons, reg_init_mode, reg_clean_mode, reg_build_mode, reg_watch_mode
 from bbb.bbb_cons import cons_bbb_a, compile_templ
 
 cm = ConsModule(__file__)
@@ -20,4 +20,4 @@ def reg_modes(sp):
   reg_clean_mode(sp, cons_main_exe)
 
 if __name__ == "__main__":
-  run(reg_modes)
+  run_cons(reg_modes)

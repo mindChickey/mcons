@@ -1,5 +1,7 @@
 
 from typing import Iterable
+
+from .rule import TargetRule
 from .cons_module import ConsModule, Rule
 from .env import batch, batch_map, env
 from .check_depend import need_update
@@ -35,5 +37,5 @@ def task(cm: ConsModule, name: str, deps: Iterable[Rule], templ: str):
   target.build_func = build_func
   return target
 
-def empty_task(cm: ConsModule, deps: Iterable[Rule]):
-  return cm.target("", deps, lambda: True, lambda: None)
+def comb_task(deps: Iterable[Rule]):
+  return TargetRule("", deps, lambda: True, lambda: None)
