@@ -1,7 +1,7 @@
 
 from .src.cons_module import ConsModule, Rule, TargetRule, SourceRule
 from .src.object_rule import object_rule
-from .src.task import pack_ar, task, cons_object_list
+from .src.task import pack_ar, task, cons_object_list, empty_task
 from .src.command import run_command
 from .src.utils import memo, replace_ext
 from .src.env import batch, batch_map
@@ -17,7 +17,7 @@ __all__ = [
   "ConsModule", "Rule", "TargetRule", "SourceRule",
 
   "object_rule", 
-  "pack_ar", "task", "cons_object_list",
+  "pack_ar", "task", "cons_object_list", "empty_task",
   "run_command",
   "memo", "replace_ext",
   "batch", "batch_map",

@@ -1,5 +1,6 @@
 
 import argparse
+from threading import Lock
 
 from .env import batch_map, env
 from .config import read_config
@@ -28,15 +29,23 @@ def count(rule: Rule):
 
 def build(root_rule: Rule, invalid_num):
   rank = 0
-  def build1(rule: Rule):
+  lock = Lock()
+  def print_message(filepath):
     nonlocal rank
+    with lock:
+      progress = f"[{rank}/{invalid_num}] "
+      color_filepath = f"\033[32;1m{filepath}\033[0m"
+      print(progress + color_filepath)
+      rank = rank + 1
+
+  def build1(rule: Rule):
     if isinstance(rule, TargetRule):
       batch_map(build1, rule.deps)
       if not rule.valid:
-        print(f"[{rank}/{invalid_num}] ", end="")
-        rank = rank + 1
+        print_message(rule.filepath)
         rule.build_func()
         return rule
+
   build1(root_rule)
   print("finish")
 

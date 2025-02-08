@@ -28,10 +28,12 @@ def task(cm: ConsModule, name: str, deps: Iterable[Rule], templ: str):
     return valid
 
   def build_func():
-    print(f"\033[32;1m{target}\033[0m") 
     run_command(cm, cmd)
     target.update()
   
   target.check_func = check_func
   target.build_func = build_func
   return target
+
+def empty_task(cm: ConsModule, deps: Iterable[Rule]):
+  return cm.target("", deps, lambda: True, lambda: None)

@@ -52,7 +52,6 @@ def object_rule(cm: ConsModule, src: str, obj: str, compile_templ: str):
     return valid
 
   def build_func():
-    print(f"\033[32m{target}\033[0m")
     update_depend(cm, target, line)
     run_command(cm, line)
     target.update()
