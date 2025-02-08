@@ -39,3 +39,8 @@ env = Env()
 
 def batch(tasks):
   return env.thread_pool.batch(tasks)
+
+def batch_map(f, xs):
+  f1 = lambda x: lambda: f(x)
+  tasks = map(f1, xs)
+  return batch(tasks)

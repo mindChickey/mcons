@@ -1,9 +1,8 @@
 
 import subprocess
 import tempfile
-from os import path
 
-from .cons_module import ConsModule, ConsNode
+from .cons_module import ConsModule, Rule
 from .check_depend import check_mark, compare_depends_mtime
 from .command import run_command
 from .env import env
@@ -14,7 +13,7 @@ def parse_depfile(depfile):
   r = content.split()
   return list(filter(lambda x: x != '\\', r[1:]))
 
-def update_depend(cm: ConsModule, target: ConsNode, line: str):
+def update_depend(cm: ConsModule, target: Rule, line: str):
   cwd = cm.build_dir
   try:
     with tempfile.NamedTemporaryFile(mode='w+') as depfile:
@@ -27,13 +26,13 @@ def update_depend(cm: ConsModule, target: ConsNode, line: str):
     print("update_depend error:", cwd, ":", line)
     exit(1)
 
-def get_depends(cm: ConsModule, target: ConsNode, line: str):
+def get_depends(cm: ConsModule, target: Rule, line: str):
   if target.exist:
     deps = env.header_depend.get(target.filepath, target.mtime)
     if deps: return deps
   return update_depend(cm, target, line)
 
-def object_need_update(cm: ConsModule, target: ConsNode, line: str):
+def object_need_update(cm: ConsModule, target: Rule, line: str):
   if check_mark(target, line):
     return True
   else:
@@ -41,15 +40,20 @@ def object_need_update(cm: ConsModule, target: ConsNode, line: str):
     deps1 = map(cm.src, deps)
     return compare_depends_mtime(target, deps1)
 
-def cons_object(cm: ConsModule, src: str, obj: str, compile_templ: str):
+def object_rule(cm: ConsModule, src: str, obj: str, compile_templ: str):
   src1 = cm.src(src)
-  target = cm.target(obj)
-  line = compile_templ.format(src1, target, **env.config)
-  env.compile_commands.push(cm.build_dir, src1.filepath, line)
+  target = cm.target(obj, [src1], None)
 
-  if object_need_update(cm, target, line):
-    print(f"\033[32m{target}\033[0m")
-    update_depend(cm, target, line)
-    run_command(cm, line)
-    target.update()
+  def build_func():
+    line = compile_templ.format(src1, target, **env.config)
+    env.compile_commands.push(cm.build_dir, src1.filepath, line)
+
+    if object_need_update(cm, target, line):
+      print(f"\033[32m{target}\033[0m")
+      update_depend(cm, target, line)
+      run_command(cm, line)
+      target.update()
+    return target
+
+  target.build_func = build_func
   return target
