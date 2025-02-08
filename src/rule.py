@@ -1,6 +1,6 @@
 
 from os import path
-from typing import List
+from typing import Iterable
 
 class Rule:
   def __str__(self):
@@ -21,7 +21,7 @@ class SourceRule(Rule):
     self.update()
 
 class TargetRule(Rule):
-  def __init__(self, filepath: str, deps: List[Rule], check_func, build_func):
+  def __init__(self, filepath: str, deps: Iterable[Rule], check_func, build_func):
     self.filepath = filepath
     self.deps = deps
     self.check_func = check_func
@@ -29,4 +29,4 @@ class TargetRule(Rule):
     self.update()
 
   def __repr__(self):
-      return f"{self.filepath} {self.deps}"
+      return f"{self.filepath} {list(self.deps)}"

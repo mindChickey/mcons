@@ -37,10 +37,10 @@ def task(cm: ConsModule, name: str, deps: Iterable[Rule], templ: str):
   target.build_func = build_func
   return target
 
-def comb_task(deps: Iterable[Rule]):
-  target = TargetRule("", deps, None, lambda: None)
+def phony_target(name: str, deps: Iterable[Rule], func=lambda: None):
+  target = TargetRule(name, deps, None, func)
   def check_func():
-    target.valid = True
-    return True
+    target.valid = False
+    return False
   target.check_func = check_func
   return target
