@@ -18,14 +18,20 @@ def pack_ar(cm: ConsModule, name: str, sources: Iterable[str], compile_templ: st
   return task(cm, name, objects, cmd)
 
 def task(cm: ConsModule, name: str, deps: Iterable[Rule], templ: str):
-  target = cm.target(name, deps, None)
+  target = cm.target(name, deps, None, None)
+  deps1 = ' '.join(map(str, deps))
+  cmd = templ.format(deps1, target, **env.config)
+
+  def check_func():
+    valid = not need_update(target, deps, cmd)
+    target.valid = valid
+    return valid
+
   def build_func():
-    deps1 = ' '.join(map(str, deps))
-    cmd = templ.format(deps1, target, **env.config)
-    if need_update(target, deps, cmd):
-      print(f"\033[32;1m{target}\033[0m") 
-      run_command(cm, cmd)
-      target.update()
+    print(f"\033[32;1m{target}\033[0m") 
+    run_command(cm, cmd)
+    target.update()
   
+  target.check_func = check_func
   target.build_func = build_func
   return target

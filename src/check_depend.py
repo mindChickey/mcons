@@ -6,14 +6,14 @@ from .env import env
 
 def compare_depends_mtime(target: Rule, deps: Iterable[Rule]):
   for dep in deps:
-    if not dep.exist:
+    if not dep.valid:
       return True
     elif target.mtime < dep.mtime:
       return True
   return False
 
 def check_mark(target: Rule, mark):
-  if target.exist:
+  if target.valid:
     mark0 = env.mark_dict.get(target.filepath, target.mtime)
     if mark0 == mark: return False
 

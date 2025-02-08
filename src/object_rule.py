@@ -27,7 +27,7 @@ def update_depend(cm: ConsModule, target: Rule, line: str):
     exit(1)
 
 def get_depends(cm: ConsModule, target: Rule, line: str):
-  if target.exist:
+  if target.valid:
     deps = env.header_depend.get(target.filepath, target.mtime)
     if deps: return deps
   return update_depend(cm, target, line)
@@ -42,18 +42,21 @@ def object_need_update(cm: ConsModule, target: Rule, line: str):
 
 def object_rule(cm: ConsModule, src: str, obj: str, compile_templ: str):
   src1 = cm.src(src)
-  target = cm.target(obj, [src1], None)
+  target = cm.target(obj, [src1], None, None)
+  line = compile_templ.format(src1, target, **env.config)
+
+  def check_func():
+    env.compile_commands.push(cm.build_dir, src1.filepath, line)
+    valid = not object_need_update(cm, target, line)
+    target.valid = valid
+    return valid
 
   def build_func():
-    line = compile_templ.format(src1, target, **env.config)
-    env.compile_commands.push(cm.build_dir, src1.filepath, line)
+    print(f"\033[32m{target}\033[0m")
+    update_depend(cm, target, line)
+    run_command(cm, line)
+    target.update()
 
-    if object_need_update(cm, target, line):
-      print(f"\033[32m{target}\033[0m")
-      update_depend(cm, target, line)
-      run_command(cm, line)
-      target.update()
-    return target
-
+  target.check_func = check_func
   target.build_func = build_func
   return target

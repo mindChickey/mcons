@@ -10,10 +10,10 @@ class Rule:
     try:
       mtime = path.getmtime(self.filepath)
       self.mtime = mtime
-      self.exist = True
+      self.valid = True
     except:
       self.mtime = 0
-      self.exist = False
+      self.valid = False
 
 class SourceRule(Rule):
   def __init__(self, filepath: str):
@@ -21,9 +21,10 @@ class SourceRule(Rule):
     self.update()
 
 class TargetRule(Rule):
-  def __init__(self, filepath: str, deps: List[Rule], build_func):
+  def __init__(self, filepath: str, deps: List[Rule], check_func, build_func):
     self.filepath = filepath
     self.deps = deps
+    self.check_func = check_func
     self.build_func = build_func
     self.update()
 

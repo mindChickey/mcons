@@ -17,11 +17,28 @@ def parse_jobs(jobs):
     print("jobs option error:", jobs)
     exit(1)
 
-def build(rule: Rule):
-  if isinstance(rule, TargetRule):
-    batch_map(build, rule.deps)
-    rule.build_func()
-    return rule
+def count(rule: Rule):
+  if isinstance(rule, SourceRule):
+    return 0
+  else:
+    invalids = batch_map(count, rule.deps)
+    valid = rule.check_func()
+    s = 0 if valid else 1
+    return s + sum(invalids)
+
+def build(root_rule: Rule, invalid_num):
+  rank = 0
+  def build1(rule: Rule):
+    nonlocal rank
+    if isinstance(rule, TargetRule):
+      batch_map(build1, rule.deps)
+      if not rule.valid:
+        print(f"[{rank}/{invalid_num}] ", end="")
+        rank = rank + 1
+        rule.build_func()
+        return rule
+  build1(root_rule)
+  print("finish")
 
 def run_build(cons):
   def f(args: argparse.Namespace):
@@ -29,7 +46,8 @@ def run_build(cons):
     thread_num = parse_jobs(args.jobs)
     env.init_build(thread_num)
     rule = cons()
-    build(rule)
+    invalid_num = count(rule)
+    build(rule, invalid_num)
   return f
 
 def reg_build_mode(subparsers, cons):

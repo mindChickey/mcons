@@ -33,6 +33,6 @@ class ConsModule:
     filepath = path.join(self.src_dir, file)
     return SourceRule(filepath)
 
-  def target(self, file, deps, build_func) -> TargetRule:
+  def target(self, file, deps, check_func, build_func) -> TargetRule:
     filepath = path.join(self.build_dir, file)
-    return TargetRule(filepath, deps, build_func)
+    return TargetRule(filepath, deps, check_func, build_func)
