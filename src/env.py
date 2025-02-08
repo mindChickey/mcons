@@ -31,6 +31,9 @@ class Env:
     self.compile_commands = CompileCommands(self.compile_commands_filename)
     self.thread_pool = ThreadPool(thread_num)
 
+  def init_clean(self, thread_num):
+    self.thread_pool = ThreadPool(thread_num)
+
   def get_node(self, f, filepath):
     with self.lock:
       return memo_dict(self.node_dict, f, filepath)
