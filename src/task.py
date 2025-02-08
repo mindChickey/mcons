@@ -38,4 +38,9 @@ def task(cm: ConsModule, name: str, deps: Iterable[Rule], templ: str):
   return target
 
 def comb_task(deps: Iterable[Rule]):
-  return TargetRule("", deps, lambda: True, lambda: None)
+  target = TargetRule("", deps, None, lambda: None)
+  def check_func():
+    target.valid = True
+    return True
+  target.check_func = check_func
+  return target
