@@ -35,12 +35,34 @@ def task(cm: ConsModule, name: str, deps: Iterable[Rule], templ: str):
   
   target.check_func = check_func
   target.build_func = build_func
+  target.message = f"\033[32;1m{target.filepath}\033[0m"
+  return target
+
+def rule(cm: ConsModule, name: str, deps: Iterable[Rule], func, mark=""):
+  target = cm.target(name, deps, None, None)
+
+  def check_func():
+    valid = not need_update(target, deps, mark)
+    target.valid = valid
+    return valid
+
+  def build_func():
+    func()
+    target.update()
+
+ 
+  target.check_func = check_func
+  target.build_func = build_func
+  target.message = f"\033[32;1m{target.filepath}\033[0m"
   return target
 
 def phony_target(name: str, deps: Iterable[Rule], func=lambda: None):
   target = TargetRule(name, deps, None, func)
+
   def check_func():
     target.valid = False
     return False
+
   target.check_func = check_func
+  target.message = f"\033[32;1m{target.filepath}\033[0m"
   return target

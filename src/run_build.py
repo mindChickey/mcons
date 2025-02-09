@@ -30,19 +30,18 @@ def count(rule: Rule):
 def build(root_rule: Rule, invalid_num):
   rank = 0
   lock = Lock()
-  def print_message(filepath):
+  def print_message(rule):
     nonlocal rank
     with lock:
       progress = f"[{rank}/{invalid_num}] "
-      color_filepath = f"\033[32;1m{filepath}\033[0m"
-      print(progress + color_filepath)
+      print(progress + rule.message)
       rank = rank + 1
 
   def build1(rule: Rule):
     if isinstance(rule, TargetRule):
       batch_map(build1, rule.deps)
       if not rule.valid:
-        print_message(rule.filepath)
+        print_message(rule)
         rule.build_func()
         return rule
 

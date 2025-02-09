@@ -26,6 +26,7 @@ class TargetRule(Rule):
     self.deps = deps
     self.check_func = check_func
     self.build_func = build_func
+    self.message = filepath
     self.update()
 
   def __repr__(self):

@@ -58,4 +58,5 @@ def object_rule(cm: ConsModule, src: str, obj: str, compile_templ: str):
 
   target.check_func = check_func
   target.build_func = build_func
+  target.message = f"\033[32m{target}\033[0m"
   return target
