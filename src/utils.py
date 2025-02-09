@@ -1,4 +1,5 @@
 
+import subprocess
 import threading
 from os import path
 
@@ -18,3 +19,9 @@ def memo(func):
 def replace_ext(filename, new_extension):
   name, ext = path.splitext(filename)
   return name + new_extension
+
+def run_command(cwd, line, check=True):
+  try:
+    subprocess.run(line.split(), cwd=cwd, check=check)
+  except:
+    exit(1)

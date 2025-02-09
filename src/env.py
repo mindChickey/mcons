@@ -1,6 +1,4 @@
 
-import threading
-
 from .record_dict import RecordDict
 from .thread_pool import ThreadPool
 from .compile_commands import CompileCommands
@@ -12,9 +10,6 @@ class Env:
     self.mark_dict_filename = "mark_dict.yaml"
     self.header_depend_filename = "header_depend.yaml"
     self.compile_commands_filename = "compile_commands.json"
-
-    self.lock = threading.Lock()
-    self.node_dict = {}
 
   def init_build(self, thread_num):
     self.mark_dict = RecordDict(self.mark_dict_filename)

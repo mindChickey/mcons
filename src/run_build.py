@@ -8,6 +8,8 @@ from .cons_module import Rule, SourceRule, TargetRule
 
 def add_build_argv(build_parser):
   build_parser.add_argument("-j", "--jobs", metavar="N", help="allow N jobs")
+  build_parser.add_argument("-p", "--print-command", action='store_true', help="print command")
+  build_parser.add_argument("-q", "--quiet", action='store_true', help="don't print message")
 
 def parse_jobs(jobs):
   if jobs == None:
@@ -27,14 +29,15 @@ def count(rule: Rule):
     s = 0 if valid else 1
     return s + sum(invalids)
 
-def build(root_rule: Rule, invalid_num):
+def build(root_rule: Rule, invalid_num, print_command, quiet):
   rank = 0
   lock = Lock()
   def print_message(rule):
     nonlocal rank
+    if quiet: return
     with lock:
       progress = f"[{rank}/{invalid_num}] "
-      print(progress + rule.message)
+      print(progress + rule.get_message(print_command))
       rank = rank + 1
 
   def build1(rule: Rule):
@@ -55,7 +58,7 @@ def run_build(cons):
     env.init_build(thread_num)
     rule = cons()
     invalid_num = count(rule)
-    build(rule, invalid_num)
+    build(rule, invalid_num, args.print_command, args.quiet)
   return f
 
 def reg_build_mode(subparsers, cons):

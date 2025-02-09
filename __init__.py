@@ -2,8 +2,7 @@
 from .src.cons_module import ConsModule, Rule, TargetRule, SourceRule
 from .src.object_rule import object_rule
 from .src.task import pack_ar, task, cons_object_list, phony_target
-from .src.command import run_command
-from .src.utils import memo, replace_ext
+from .src.utils import memo, replace_ext, run_command
 from .src.env import batch, batch_map
 from .src.config import get_config, config_format
 
@@ -18,8 +17,7 @@ __all__ = [
 
   "object_rule", 
   "pack_ar", "task", "cons_object_list", "phony_target",
-  "run_command",
-  "memo", "replace_ext",
+  "memo", "replace_ext", "run_command",
   "batch", "batch_map",
   "get_config", "config_format",
 

@@ -4,7 +4,7 @@ import tempfile
 
 from .cons_module import ConsModule, Rule
 from .check_depend import check_mark, compare_depends_mtime
-from .command import run_command
+from .utils import run_command
 from .env import env
 
 def parse_depfile(depfile):
@@ -44,19 +44,27 @@ def object_rule(cm: ConsModule, src: str, obj: str, compile_templ: str):
   src1 = cm.src(src)
   target = cm.target(obj, [src1], None, None)
   line = compile_templ.format(src1, target, **env.config)
+  cwd = cm.build_dir
 
   def check_func():
-    env.compile_commands.push(cm.build_dir, src1.filepath, line)
+    env.compile_commands.push(cwd, src1.filepath, line)
     valid = not object_need_update(cm, target, line)
     target.valid = valid
     return valid
 
   def build_func():
     update_depend(cm, target, line)
-    run_command(cm, line)
+    run_command(cwd, line)
     target.update()
+
+  def get_message(verbose):
+    color_filepath = f"\033[32m{target}\033[0m"
+    if not verbose:
+      return color_filepath
+    else:
+      return '\n'.join([color_filepath, cwd, line])
 
   target.check_func = check_func
   target.build_func = build_func
-  target.message = f"\033[32m{target}\033[0m"
+  target.get_message = get_message
   return target
