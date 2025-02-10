@@ -1,3 +1,3 @@
 
-# build -k 
-# build 参数
+# build --keep-going
+# build -D xxx

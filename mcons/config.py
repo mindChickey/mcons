@@ -13,7 +13,7 @@ def config_format(templ):
 def read_config():
   try:
     config_mtime, config_content = read_yaml(env.config_filename)
-    if config_content["mcons_version"] != "1.0.1":
+    if config_content["mcons_version"] != "1.0.2":
       print("mcons_config.yaml version mismatch, please run")
       print(sys.argv[0] + " init")
       exit(1)
@@ -25,5 +25,5 @@ def read_config():
     exit(1)
 
 def save_config():
-  config_content = {"mcons_version": "1.0.1", "config": env.config}
+  config_content = {"mcons_version": "1.0.2", "config": env.config}
   save_yaml(env.config_filename, config_content)()

@@ -5,6 +5,6 @@ void bbb();
 
 int main(){
   bbb();
-  puts("main");
+  puts("main1");
   return 0;
 }

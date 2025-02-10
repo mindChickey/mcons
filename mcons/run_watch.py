@@ -2,7 +2,7 @@
 import sys
 import argparse
 from os import path
-from watchrun import watch_dir_cmds
+from watchact import watch_dir_cmds
 
 from .run_build import add_build_argv
 
