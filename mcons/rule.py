@@ -1,6 +1,13 @@
 
+from enum import Enum
 from os import path
 from typing import Iterable
+from threading import Lock
+
+class TravelStatus(Enum):
+  NeverTravel = 0
+  HasCount = 1
+  HasBuild = 2
 
 class Rule:
   def __str__(self):
@@ -24,6 +31,8 @@ class TargetRule(Rule):
   def __init__(self, filepath: str, deps: Iterable[Rule], check_func, build_func):
     self.filepath = filepath
     self.deps = deps
+    self.lock = Lock()
+    self.travel_status = TravelStatus.NeverTravel
     self.check_func = check_func
     self.build_func = build_func
     self.get_message = lambda verbose: filepath
