@@ -3,6 +3,7 @@ from sys import argv
 from os import path, makedirs
 
 from .rule import Rule, TargetRule, SourceRule
+from .config import config_format
 
 def get_build_dir(src_dir, root_src_dir):
   if root_src_dir != path.commonpath([root_src_dir, src_dir]):
@@ -21,6 +22,10 @@ class ConsModule:
 
   def src(self, file) -> SourceRule:
     filepath = path.join(self.src_dir, file)
+    return SourceRule(filepath)
+
+  def extern_file(self, file) -> SourceRule:
+    filepath = config_format(file)
     return SourceRule(filepath)
 
   def target(self, file, deps, check_func, build_func) -> TargetRule:
