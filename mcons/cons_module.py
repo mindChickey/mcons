@@ -20,6 +20,10 @@ class ConsModule:
     self.build_dir = get_build_dir(self.src_dir, root_src_dir)
     makedirs(self.build_dir, exist_ok=True)
 
+  def relative(self, rel):
+    p = path.join(self.src_dir, rel, "file")
+    return ConsModule(p)
+
   def src(self, file) -> SourceRule:
     filepath = path.join(self.src_dir, file)
     return SourceRule(filepath)
