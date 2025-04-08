@@ -18,7 +18,7 @@ def update_depend(cm: ConsModule, target: Rule, line: str):
   try:
     with tempfile.NamedTemporaryFile(mode='w+') as depfile:
       line1 = line + f" -MM -MF {depfile.name}"
-      subprocess.run(line1.split(), cwd=cwd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+      subprocess.run(line1.split(), cwd=cwd, check=True, stdout=subprocess.DEVNULL)
       deps = parse_depfile(depfile)
       env.header_depend.update(target.filepath, deps)
       return deps
