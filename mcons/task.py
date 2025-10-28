@@ -13,8 +13,7 @@ def cons_object_list(cm: ConsModule, sources: Iterable[str], ext: str, compile_t
     return object_rule(cm, src, replace_ext(src, ext), compile_templ)
   return batch_map(f, sources)
 
-def pack_ar(cm: ConsModule, name: str, sources: Iterable[str], compile_templ: str):
-  objects = cons_object_list(cm, sources, ".o", compile_templ)
+def pack_ar(cm: ConsModule, name: str, objects):
   cmd = "ar rcs {1} {0}"
   return task(cm, name, objects, cmd)
 
