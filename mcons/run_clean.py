@@ -28,7 +28,7 @@ def run_clean(cons, extra_files):
       remove_file(name)
 
     env.init_clean(None)
-    config = read_config()
+    config = read_config(args.fuze_file)
     rule = cons(config)
     clean(rule)
   return f

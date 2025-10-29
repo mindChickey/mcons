@@ -1,14 +1,14 @@
 
 import os
 import sys
+import yaml
 
-from .record_dict import read_yaml, save_yaml
-from .env import env
+from .record_dict import read_yaml
 
-def read_config():
+def read_config(fuze_file):
   try:
-    config_mtime, config_content = read_yaml(env.config_filename)
-    if config_content["mcons_version"] != "1.0.2":
+    config_mtime, config_content = read_yaml(fuze_file)
+    if config_content["mcons_version"] != "1.0.5":
       print("mcons_config.yaml version mismatch, please run")
       print(sys.argv[0] + " init")
       exit(1)
@@ -20,9 +20,14 @@ def read_config():
     exit(1)
 
 def save_config(cons_file: str, config_dict):
+  cons_file1 = os.path.abspath(cons_file)
   config_content = {
-    "mcons_version": "1.0.2", 
-    "cons_file": os.path.abspath(cons_file),
+    "mcons_version": "1.0.5",
+    "cons_file": cons_file1,
     "config": config_dict
   }
-  save_yaml(env.config_filename, config_content)()
+  with open("./mcons_fuze", 'w', encoding='utf-8') as f:
+    f.write(f"#!{sys.executable} {cons_file1}\n\n")
+    yaml.dump(config_content, f)
+
+  os.chmod("./mcons_fuze", 0o755)

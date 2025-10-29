@@ -5,7 +5,6 @@ from .compile_commands import CompileCommands
 
 class Env:
   def __init__(self):
-    self.config_filename = "mcons_config.yaml"
     self.mark_dict_filename = "mark_dict.yaml"
     self.header_depend_filename = "header_depend.yaml"
     self.compile_commands_filename = "compile_commands.json"

@@ -69,7 +69,7 @@ def run_build(cons):
   def f(args: argparse.Namespace):
     thread_num = parse_jobs(args.jobs)
     env.init_build(thread_num)
-    config = read_config()
+    config = read_config(args.fuze_file)
     rule = cons(config)
     invalid_num = count(rule)
     build(rule, invalid_num, args.print_command, args.quiet)
