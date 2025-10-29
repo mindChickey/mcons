@@ -2,6 +2,8 @@
 import argparse
 from threading import Lock
 
+from mcons.run_init import put_defs
+
 from .rule import TravelStatus
 from .env import batch_map, env
 from .fuze_file import read_fuze
@@ -11,6 +13,7 @@ def add_build_argv(build_parser):
   build_parser.add_argument("-j", "--jobs", metavar="N", help="allow N jobs")
   build_parser.add_argument("-p", "--print-command", action='store_true', help="print command")
   build_parser.add_argument("-q", "--quiet", action='store_true', help="don't print message")
+  build_parser.add_argument("-D", action='append', metavar="KEY[=VALUE]", help="define key value pair")
 
 def parse_jobs(jobs):
   if jobs == None:
@@ -70,6 +73,7 @@ def run_build(cons):
     thread_num = parse_jobs(args.jobs)
     env.init_build(thread_num)
     config = read_fuze(args.fuze_file)
+    put_defs(config, args.D)
     rule = cons(config)
     invalid_num = count(rule)
     build(rule, invalid_num, args.print_command, args.quiet)
