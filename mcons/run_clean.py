@@ -35,4 +35,5 @@ def run_clean(cons, extra_files):
 
 def reg_clean_mode(subparsers, cons, extra_files=[]):
   watch_parser = subparsers.add_parser("clean", help="clean mode")
-  watch_parser.set_defaults(func=run_clean(cons, extra_files))
+  func = run_clean(cons, extra_files)
+  watch_parser.set_defaults(func=func)

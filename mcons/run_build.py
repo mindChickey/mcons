@@ -33,7 +33,7 @@ def run_build(cons):
   return f
 
 def reg_build_mode(subparsers, cons):
-  func = run_build(cons)
   build_parser = subparsers.add_parser("build", help="build project")
   add_build_argv(build_parser)
+  func = run_build(cons)
   build_parser.set_defaults(func=func)

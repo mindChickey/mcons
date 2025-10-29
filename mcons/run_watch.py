@@ -23,8 +23,8 @@ def run_watch(pyfile):
   return f
 
 def reg_watch_mode(subparsers, pyfile):
-  func = run_watch(pyfile)
   watch_parser = subparsers.add_parser("watch", help="watch mode")
   add_build_argv(watch_parser)
   watch_parser.add_argument("-R", action='append', metavar="command", help="run command")
+  func = run_watch(pyfile)
   watch_parser.set_defaults(func=func)

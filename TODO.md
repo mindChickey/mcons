@@ -9,6 +9,3 @@
   subprocess 参数
   build --keep-going
   watch 模式完善 build 选项
-
-  custom 模式
-
