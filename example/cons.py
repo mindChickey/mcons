@@ -10,8 +10,7 @@ def cons_main_o(config):
   return object_rule(cm, "main.c", "main.o", cmd)
 
 def cons_main_exe(config):
-  # deps = batch([cons_main_o, cons_bbb_a])
-  deps = [cons_main_o(config), cons_bbb_a(config)]
+  deps = batch([cons_main_o, cons_bbb_a], config)
   cmd = "clang {0} -o {1}"
   return task(cm, "main", deps, cmd)
 

@@ -21,8 +21,8 @@ class Env:
 
 env = Env()
 
-def batch(tasks):
-  return env.thread_pool.batch(tasks)
+def batch(tasks, *args):
+  return env.thread_pool.batch(tasks, *args)
 
 def batch_map(f, xs):
   f1 = lambda x: lambda: f(x)

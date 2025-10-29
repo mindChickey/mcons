@@ -8,7 +8,6 @@
 
 # feature
   每个 task 参数对齐
-  batch 参数
   remove argparse
   标注类型
   subprocess 参数

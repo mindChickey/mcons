@@ -7,15 +7,15 @@ class ThreadPool:
     self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=thread_num)
     atexit.register(lambda: self.executor.shutdown())
 
-  def batch(self, tasks):
+  def batch(self, tasks, *args):
     tasks1 = list(tasks)
-    futures = [self.executor.submit(task) for task in tasks1]
+    futures = [self.executor.submit(task, *args) for task in tasks1]
     results = []
     i = len(tasks1)
     while i > 0:
       index = i - 1
       if futures[index].cancel():
-        result = tasks1[index]()
+        result = tasks1[index](*args)
         results.append(result)
         i = index
       else:
