@@ -3,8 +3,8 @@ import argparse
 
 from .act_build import build, count
 from .run_init import put_defs
-from .env import env
-from .fuze_file import read_fuze
+from ..core.env import env
+from ..metafile.fuze_file import read_fuze
 
 def add_build_argv(build_parser):
   build_parser.add_argument("-j", "--jobs", metavar="N", help="allow N jobs")

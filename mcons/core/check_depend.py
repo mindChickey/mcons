@@ -1,7 +1,7 @@
 
 from typing import Iterable
 
-from .cons_module import Rule
+from ..rules.rule import Rule
 from .env import env
 
 def compare_depends_mtime(target: Rule, deps: Iterable[Rule]):

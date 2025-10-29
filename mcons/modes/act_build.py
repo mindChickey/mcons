@@ -1,9 +1,8 @@
 
 from threading import Lock
 
-from .rule import TravelStatus
-from .env import batch_map
-from .cons_module import Rule, TargetRule
+from ..rules.rule import Rule, TravelStatus, TargetRule
+from ..core.env import batch_map
 
 def travel_rule(rule, status, default_ret, func):
   if isinstance(rule, TargetRule):

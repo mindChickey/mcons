@@ -1,11 +1,11 @@
 
 from typing import Iterable
 
-from .rule import TargetRule
-from .cons_module import ConsModule, Rule
-from .env import batch, batch_map, env
-from .check_depend import need_update
-from .utils import replace_ext, run_command
+from .rule import TargetRule, Rule
+from ..core.cons_module import ConsModule
+from ..core.env import batch, batch_map, env
+from ..core.check_depend import need_update
+from ..core.utils import replace_ext, run_command
 from .object_rule import object_rule
 
 def cons_object_list(cm: ConsModule, ext: str, sources: Iterable[str], compile_templ: str):

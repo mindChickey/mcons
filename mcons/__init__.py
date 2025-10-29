@@ -1,15 +1,16 @@
 
-from .cons_module import ConsModule, Rule, TargetRule, SourceRule
-from .object_rule import object_rule
-from .task import pack_ar, task, cons_object_list, phony_target, rule
-from .utils import memo, replace_ext, run_command
-from .env import batch, batch_map
+from .core.cons_module import ConsModule, Rule, TargetRule, SourceRule
+from .core.utils import memo, replace_ext, run_command
+from .core.env import batch, batch_map
 
-from .run_mode import run_cons
-from .run_init import  reg_init_mode
-from .run_clean import reg_clean_mode
-from .run_build import reg_build_mode
-from .run_watch import reg_watch_mode
+from .rules.object_rule import object_rule
+from .rules.task import pack_ar, task, cons_object_list, phony_target, rule
+
+from .modes.run_mode import run_cons
+from .modes.run_init import  reg_init_mode
+from .modes.run_clean import reg_clean_mode
+from .modes.run_build import reg_build_mode
+from .modes.run_watch import reg_watch_mode
 
 __all__ = [
   "ConsModule", "Rule", "TargetRule", "SourceRule",

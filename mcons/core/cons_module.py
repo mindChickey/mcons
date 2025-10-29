@@ -2,7 +2,7 @@
 from sys import argv
 from os import path, makedirs
 
-from .rule import Rule, TargetRule, SourceRule
+from ..rules.rule import Rule, TargetRule, SourceRule
 
 def get_build_dir(src_dir, root_src_dir):
   if root_src_dir != path.commonpath([root_src_dir, src_dir]):

@@ -2,10 +2,11 @@
 import subprocess
 import tempfile
 
-from .cons_module import ConsModule, Rule
-from .check_depend import check_mark, compare_depends_mtime
-from .utils import run_command
-from .env import env
+from .rule import Rule
+from ..core.cons_module import ConsModule
+from ..core.check_depend import check_mark, compare_depends_mtime
+from ..core.utils import run_command
+from ..core.env import env
 
 def parse_depfile(depfile):
   depfile.seek(0)

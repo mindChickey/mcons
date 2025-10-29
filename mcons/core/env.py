@@ -1,7 +1,7 @@
 
-from .record_dict import RecordDict
+from ..metafile.record_dict import RecordDict
+from ..metafile.compile_commands import CompileCommands
 from .thread_pool import ThreadPool
-from .compile_commands import CompileCommands
 
 class Env:
   def __init__(self):

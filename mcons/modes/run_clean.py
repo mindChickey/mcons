@@ -1,10 +1,9 @@
 
 from os import remove
 
-from .fuze_file import read_fuze
-from .env import env
-from .rule import Rule, TargetRule
-from .env import batch_map, env
+from ..metafile.fuze_file import read_fuze
+from ..core.env import batch_map, env
+from ..rules.rule import Rule, TargetRule
 
 def remove_file(filepath):
   try:

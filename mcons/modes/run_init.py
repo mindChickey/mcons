@@ -1,6 +1,6 @@
 
 import argparse
-from .fuze_file import save_fuze
+from ..metafile.fuze_file import save_fuze
 
 def put_defs(config, D):
   defs = [] if D == None else D
