@@ -15,13 +15,13 @@ def cons_object_list(cm: ConsModule, ext: str, sources: Iterable[str], compile_t
   return batch_map(f, sources)
 
 def pack_ar(cm: ConsModule, name: str, objects):
-  cmd = "ar rcs {1} {0}"
+  cmd = "ar rcs {_target} {_deps}"
   return task(cm, name, objects, cmd)
 
 def task(cm: ConsModule, name: str, deps: Iterable[Rule], templ: str):
   target = cm.target(name, deps, None, None)
   deps1 = ' '.join(map(str, deps))
-  cmd = templ.format(deps1, target)
+  cmd = templ.format(*deps1, _target=target, _deps=deps1)
   cwd = cm.build_dir
 
   def check_func():

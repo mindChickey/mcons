@@ -43,7 +43,7 @@ def object_need_update(cm: ConsModule, target: Rule, line: str):
 def object_rule(cm: ConsModule, obj: str, src: str, compile_templ: str):
   src1 = cm.src(src)
   target = cm.target(obj, [src1], None, None)
-  line = compile_templ.format(src1, target)
+  line = compile_templ.format(src1, _target=target, _deps=src1)
   cwd = cm.build_dir
 
   def check_func():
