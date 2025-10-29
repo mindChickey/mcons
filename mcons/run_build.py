@@ -4,7 +4,7 @@ from threading import Lock
 
 from .rule import TravelStatus
 from .env import batch_map, env
-from .config import read_config
+from .fuze_file import read_fuze
 from .cons_module import Rule, SourceRule, TargetRule
 
 def add_build_argv(build_parser):
@@ -69,7 +69,7 @@ def run_build(cons):
   def f(args: argparse.Namespace):
     thread_num = parse_jobs(args.jobs)
     env.init_build(thread_num)
-    config = read_config(args.fuze_file)
+    config = read_fuze(args.fuze_file)
     rule = cons(config)
     invalid_num = count(rule)
     build(rule, invalid_num, args.print_command, args.quiet)

@@ -12,6 +12,4 @@
   subprocess 参数
   build 动态参数
 
-  config 改名
-  mcons_fuze 字符串统一
   subparser 范式修改

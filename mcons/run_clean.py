@@ -1,7 +1,7 @@
 
 from os import remove
 
-from .config import read_config
+from .fuze_file import read_fuze
 from .env import env
 from .rule import Rule, TargetRule
 from .env import batch_map, env
@@ -28,7 +28,7 @@ def run_clean(cons, extra_files):
       remove_file(name)
 
     env.init_clean(None)
-    config = read_config(args.fuze_file)
+    config = read_fuze(args.fuze_file)
     rule = cons(config)
     clean(rule)
   return f

@@ -1,6 +1,6 @@
 
 import argparse
-from .config import save_config
+from .fuze_file import save_fuze
 
 def put_defs(config, D):
   defs = [] if D == None else D
@@ -13,7 +13,7 @@ def run_init(cons_file: str, default_config):
   def f(args: argparse.Namespace):
     config = default_config
     put_defs(config, args.D)
-    save_config(cons_file, config)
+    save_fuze(args.fuze_file, cons_file, config)
   return f
 
 def reg_init_mode(subparsers, cons_file, default_config={}):
