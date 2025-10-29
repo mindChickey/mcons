@@ -4,7 +4,6 @@ from .object_rule import object_rule
 from .task import pack_ar, task, cons_object_list, phony_target, rule
 from .utils import memo, replace_ext, run_command
 from .env import batch, batch_map
-from .config import get_config, config_format
 
 from .run_mode import run_cons
 from .run_init import  reg_init_mode
@@ -19,7 +18,6 @@ __all__ = [
   "pack_ar", "task", "cons_object_list", "phony_target", "rule",
   "memo", "replace_ext", "run_command",
   "batch", "batch_map",
-  "get_config", "config_format",
 
   "run_cons",
   "reg_init_mode", "reg_clean_mode", "reg_build_mode", "reg_watch_mode"

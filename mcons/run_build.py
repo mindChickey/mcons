@@ -67,10 +67,10 @@ def build(root_rule: Rule, invalid_num, print_command, quiet):
 
 def run_build(cons):
   def f(args: argparse.Namespace):
-    read_config()
     thread_num = parse_jobs(args.jobs)
     env.init_build(thread_num)
-    rule = cons()
+    config = read_config()
+    rule = cons(config)
     invalid_num = count(rule)
     build(rule, invalid_num, args.print_command, args.quiet)
   return f

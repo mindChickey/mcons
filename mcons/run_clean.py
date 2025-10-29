@@ -27,9 +27,10 @@ def run_clean(cons, extra_files):
     for name in extra_files:
       remove_file(name)
 
-    read_config()
     env.init_clean(None)
-    clean(cons())
+    config = read_config()
+    rule = cons(config)
+    clean(rule)
   return f
 
 def reg_clean_mode(subparsers, cons, extra_files=[]):

@@ -20,7 +20,7 @@ def pack_ar(cm: ConsModule, name: str, objects):
 def task(cm: ConsModule, name: str, deps: Iterable[Rule], templ: str):
   target = cm.target(name, deps, None, None)
   deps1 = ' '.join(map(str, deps))
-  cmd = templ.format(deps1, target, **env.config)
+  cmd = templ.format(deps1, target)
   cwd = cm.build_dir
 
   def check_func():

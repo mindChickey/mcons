@@ -10,6 +10,9 @@ class TravelStatus(Enum):
   HasBuild = 2
 
 class Rule:
+  def __init__(self, filepath: str):
+    self.filepath = filepath 
+
   def __str__(self):
     return self.filepath
 
@@ -24,12 +27,12 @@ class Rule:
 
 class SourceRule(Rule):
   def __init__(self, filepath: str):
-    self.filepath = filepath 
+    super().__init__(filepath)
     self.update()
 
 class TargetRule(Rule):
   def __init__(self, filepath: str, deps: Iterable[Rule], check_func, build_func):
-    self.filepath = filepath
+    super().__init__(filepath)
     self.deps = deps
     self.lock = Lock()
     self.travel_status = TravelStatus.NeverTravel

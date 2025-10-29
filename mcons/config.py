@@ -1,14 +1,9 @@
 
+import os
 import sys
 
 from .record_dict import read_yaml, save_yaml
 from .env import env
-
-def get_config():
-  return env.config
-
-def config_format(templ):
-  return templ.format(**env.config)
 
 def read_config():
   try:
@@ -18,12 +13,16 @@ def read_config():
       print(sys.argv[0] + " init")
       exit(1)
     else:
-      env.config = config_content["config"]
+      return config_content["config"]
   except:
     print("mcons_config.yaml not found, please run")
     print(sys.argv[0] + " init")
     exit(1)
 
-def save_config():
-  config_content = {"mcons_version": "1.0.2", "config": env.config}
+def save_config(cons_file: str, config_dict):
+  config_content = {
+    "mcons_version": "1.0.2", 
+    "cons_file": os.path.abspath(cons_file),
+    "config": config_dict
+  }
   save_yaml(env.config_filename, config_content)()
