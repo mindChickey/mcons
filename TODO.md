@@ -10,6 +10,5 @@
   build --keep-going
   watch 模式完善 build 选项
 
-  subparser 范式修改
   custom 模式
 
