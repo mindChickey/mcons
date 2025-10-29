@@ -5,5 +5,5 @@ cm = ConsModule(__file__)
 
 def cons_bbb_a(config):
   cmd = "gcc -c {0} -o {1} " + config["FLAGS"]
-  objs = cons_object_list(cm, ["bbb.c", "ccc.c"], ".o", cmd)
+  objs = cons_object_list(cm, ".o", ["bbb.c", "ccc.c"], cmd)
   return pack_ar(cm, "libBBB.a", objs)

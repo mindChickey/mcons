@@ -40,7 +40,7 @@ def object_need_update(cm: ConsModule, target: Rule, line: str):
     deps1 = map(cm.src, deps)
     return compare_depends_mtime(target, deps1)
 
-def object_rule(cm: ConsModule, src: str, obj: str, compile_templ: str):
+def object_rule(cm: ConsModule, obj: str, src: str, compile_templ: str):
   src1 = cm.src(src)
   target = cm.target(obj, [src1], None, None)
   line = compile_templ.format(src1, target)

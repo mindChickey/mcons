@@ -8,9 +8,10 @@ from .check_depend import need_update
 from .utils import replace_ext, run_command
 from .object_rule import object_rule
 
-def cons_object_list(cm: ConsModule, sources: Iterable[str], ext: str, compile_templ: str):
+def cons_object_list(cm: ConsModule, ext: str, sources: Iterable[str], compile_templ: str):
   def f(src):
-    return object_rule(cm, src, replace_ext(src, ext), compile_templ)
+    obj = replace_ext(src, ext)
+    return object_rule(cm, obj, src, compile_templ)
   return batch_map(f, sources)
 
 def pack_ar(cm: ConsModule, name: str, objects):
