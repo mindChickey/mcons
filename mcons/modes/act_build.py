@@ -46,4 +46,4 @@ def build(root_rule: Rule, invalid_num, print_command, quiet):
     return travel_rule(rule, TravelStatus.HasBuild, rule, build0)
 
   build1(root_rule)
-  print("finish")
+  print(f"\033[32;1mfinish\033[0m")
