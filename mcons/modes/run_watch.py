@@ -6,9 +6,17 @@ from watchact import watch_dir_cmds
 
 from .run_build import add_build_argv
 
+def combine_build_argv(args: argparse.Namespace):
+  jobs = "-j" + args.jobs if args.jobs else ""
+  print_command = "-p" if args.print_command else ""
+  quiet = "-q" if args.quiet else ""
+  defines = ["-D" + pair for pair in args.D]
+  return f"{jobs} {print_command} {quiet} {" ".join(defines)}"
+
 def get_build_cmd(pyfile, args: argparse.Namespace):
-  argv = "-j" + args.jobs if args.jobs else ""
-  return f"{sys.executable} {pyfile} build " + argv
+  argv = combine_build_argv(args)
+  cmd = f"{sys.executable} {pyfile} {args.fuze_file} build " + argv
+  return cmd
   
 def watch(pyfile, cmds):
   src_dir = path.dirname(pyfile)
