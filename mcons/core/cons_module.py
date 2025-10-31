@@ -32,4 +32,6 @@ class ConsModule:
 
   def target(self, file, deps, check_func, build_func) -> TargetRule:
     filepath = path.join(self.build_dir, file)
+    build_dir = path.dirname(filepath)
+    makedirs(build_dir, exist_ok=True)
     return TargetRule(filepath, deps, check_func, build_func)
