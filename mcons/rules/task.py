@@ -6,12 +6,12 @@ from ..core.cons_module import ConsModule
 from ..core.env import batch, batch_map, env
 from ..core.check_depend import need_update
 from ..core.utils import replace_ext, run_command
-from .object_rule import object
+from .object_rule import cons_object
 
-def object_list(cm: ConsModule, ext: str, sources: Iterable[str], compile_templ: str):
+def cons_object_list(cm: ConsModule, ext: str, sources: Iterable[str], compile_templ: str):
   def f(src):
     obj = replace_ext(src, ext)
-    return object(cm, obj, src, compile_templ)
+    return cons_object(cm, obj, src, compile_templ)
   return batch_map(f, sources)
 
 def pack_ar(cm: ConsModule, name: str, objects):
