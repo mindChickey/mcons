@@ -7,11 +7,11 @@ def memo(func):
   has_eval = False
   value = None
   lock = threading.Lock()
-  def f():
+  def f(*args):
     nonlocal has_eval, value
     with lock:
       if not has_eval:
-        value = func()
+        value = func(*args)
         has_eval = True
       return value
   return f
