@@ -11,7 +11,7 @@ def combine_build_argv(args: argparse.Namespace):
   print_command = "-p" if args.print_command else ""
   quiet = "-q" if args.quiet else ""
   defines = ["-D" + pair for pair in args.D]
-  return f"{jobs} {print_command} {quiet} {" ".join(defines)}"
+  return f"{jobs} {print_command} {quiet} {' '.join(defines)}"
 
 def get_build_cmd(pyfile, args: argparse.Namespace):
   argv = combine_build_argv(args)
